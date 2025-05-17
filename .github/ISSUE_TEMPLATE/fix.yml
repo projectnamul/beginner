@@ -1,0 +1,22 @@
+name: Fix template
+description: Template used to modify something
+title: "🐛 [Fix] "
+labels: ["bug"]
+
+body:
+  - type: input
+    id: fix-content
+    attributes:
+      label: "📝 What features do you modify?"
+      description: Please write down a description of the modifications.
+      placeholder: ex. Modify Post DTO
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: "👀 More Information (Optional)"
+      description: If you lack an explanation, please write down more details.
+      placeholder: ex. Modify the DTO Field
+    validations:
+      required: false

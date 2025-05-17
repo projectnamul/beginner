@@ -1,0 +1,22 @@
+name: Refactor Template
+description: Template used for refactoring
+title: "♻️ [Refactor] "
+labels: ["refactor"]
+
+body:
+  - type: input
+    id: feature-content
+    attributes:
+      label: "📝 Which part do you refact?"
+      description: Please write down a description of the work to be refactored.
+      placeholder: ex. Edit function structure
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: "👀 More information (Optional)"
+      description: If you lack an explanation, please write down more details.
+      placeholder: ex. Separation into private functions
+    validations:
+      required: false

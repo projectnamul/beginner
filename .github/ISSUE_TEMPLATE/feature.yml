@@ -1,0 +1,22 @@
+name: Feature Template
+description: Templates used to add features
+title: "✨ [Feat] "
+labels: ["feature"]
+
+body:
+  - type: input
+    id: feature-content
+    attributes:
+      label: "📝 What features do I add?"
+      description: Please write down a description of the feature you want to work on.
+      placeholder: ex. Implementing a getting post
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: "👀 More information (Optional)"
+      description: If you lack an explanation, please write down more details.
+      placeholder: ex. Apply cursor-based pagenation to post queries
+    validations:
+      required: false

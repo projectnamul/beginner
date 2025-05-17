@@ -1,0 +1,22 @@
+name: Chore Template
+description: Template for chore
+title: "🚀 [Chore] "
+labels: ["chore"]
+
+body:
+  - type: input
+    id: feature-content
+    attributes:
+      label: "📝 What is your problem?"
+      description: Please describe the changes
+      placeholder: ex. fix template
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: "👀 More information (Optional)"
+      description: If the description is insufficient, please provide more details.
+      placeholder: ex. Edit label of feature template
+    validations:
+      required: false
