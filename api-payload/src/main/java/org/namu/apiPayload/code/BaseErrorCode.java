@@ -1,6 +1,6 @@
-package io.github.namu.apiPayload.code;
+package org.namu.apiPayload.code;
 
-import io.github.namu.apiPayload.code.dto.ErrorReasonDTO;
+import org.namu.apiPayload.code.dto.ErrorReasonDTO;
 
 /**
  * Interface for implementing data on failures

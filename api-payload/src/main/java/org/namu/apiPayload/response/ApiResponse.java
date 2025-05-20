@@ -1,10 +1,10 @@
-package io.github.namu.apiPayload.response;
+package org.namu.apiPayload.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.github.namu.apiPayload.code.BaseSuccessCode;
-import io.github.namu.apiPayload.code.SuccessStatus;
+import org.namu.apiPayload.code.BaseSuccessCode;
+import org.namu.apiPayload.code.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

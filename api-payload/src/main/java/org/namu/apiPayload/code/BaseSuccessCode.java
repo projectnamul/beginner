@@ -1,6 +1,6 @@
-package io.github.namu.apiPayload.code;
+package org.namu.apiPayload.code;
 
-import io.github.namu.apiPayload.code.dto.ReasonDTO;
+import org.namu.apiPayload.code.dto.ReasonDTO;
 
 /**
  * Interface for implementing data on success
