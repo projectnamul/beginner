@@ -1,7 +1,7 @@
-package io.github.namu.apiPayload.error;
+package org.namu.apiPayload.error;
 
-import io.github.namu.apiPayload.code.BaseErrorCode;
-import io.github.namu.apiPayload.code.dto.ErrorReasonDTO;
+import org.namu.apiPayload.code.BaseErrorCode;
+import org.namu.apiPayload.code.dto.ErrorReasonDTO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
