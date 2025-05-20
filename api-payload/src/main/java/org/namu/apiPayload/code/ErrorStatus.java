@@ -1,6 +1,6 @@
-package io.github.namu.apiPayload.code;
+package org.namu.apiPayload.code;
 
-import io.github.namu.apiPayload.code.dto.ErrorReasonDTO;
+import org.namu.apiPayload.code.dto.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

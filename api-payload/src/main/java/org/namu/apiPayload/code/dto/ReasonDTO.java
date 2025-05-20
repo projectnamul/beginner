@@ -1,15 +1,15 @@
-package io.github.namu.apiPayload.code.dto;
+package org.namu.apiPayload.code.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * The class that contains information about failures
+ * The class that contains information about success
  */
 @Getter
 @Builder
-public class ErrorReasonDTO {
+public class ReasonDTO {
     private HttpStatus httpStatus;
 
     private final boolean isSuccess;

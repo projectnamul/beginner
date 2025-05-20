@@ -1,8 +1,8 @@
-package io.github.namu.apiPayload.error;
+package org.namu.apiPayload.error;
 
-import io.github.namu.apiPayload.code.ErrorStatus;
-import io.github.namu.apiPayload.code.dto.ErrorReasonDTO;
-import io.github.namu.apiPayload.response.ApiResponse;
+import org.namu.apiPayload.code.ErrorStatus;
+import org.namu.apiPayload.code.dto.ErrorReasonDTO;
+import org.namu.apiPayload.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

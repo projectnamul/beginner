@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.namu</groupId>
-        <artifactId>initial-settings</artifactId>
-        <version>0.0.1</version>
+        <groupId>org.namu</groupId>
+        <artifactId>beginner</artifactId>
+        <version>0.0.3</version>
     </parent>
 
     <artifactId>api-payload</artifactId>
