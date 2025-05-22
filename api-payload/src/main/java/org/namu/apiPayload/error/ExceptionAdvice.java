@@ -1,121 +1,83 @@
 package org.namu.apiPayload.error;
 
-import org.namu.apiPayload.code.ErrorStatus;
+import jakarta.validation.ConstraintViolation;
 import org.namu.apiPayload.code.dto.ErrorReasonDTO;
-import org.namu.apiPayload.response.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.namu.apiPayload.handler.ExceptionAdviceHandler;
+import org.namu.apiPayload.response.BaseResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * The Exception Handler for RestController, this contains ConstraintViolationException, MethodArgumentNotValidException, ServerApplicationException, Exception
+ * @param <E> ErrorReasonDTO, The type of data returned by BaseErrorCode in ServerException
+ */
 @Slf4j
 @Component
 @RestControllerAdvice(annotations = {RestController.class})
-public class ExceptionAdvice extends ResponseEntityExceptionHandler {
+public class ExceptionAdvice<E extends ErrorReasonDTO> {
 
+    private final ExceptionAdviceHandler<E> exceptionAdviceHandler;
+    private final Class<E> type;
 
-    @ExceptionHandler
-    public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
+    /**
+     * The constructor with ExceptionAdviceHandler, type
+     * @param exceptionAdviceHandler The class that generate responses with ErrorReasonDTO
+     * @param type The Type of ErrorReasonDTO
+     */
+    public ExceptionAdvice(ExceptionAdviceHandler<E> exceptionAdviceHandler, Class<E> type) {
+        this.exceptionAdviceHandler = exceptionAdviceHandler;
+        this.type = type;
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public BaseResponse validation(ConstraintViolationException e) {
         String errorMessage = e.getConstraintViolations().stream()
-                .map(constraintViolation -> constraintViolation.getMessage())
+                .map(ConstraintViolation::getMessage)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("ConstraintViolationException 추출 도중 에러 발생"));
 
-        return handleExceptionInternalConstraint(e, ErrorStatus.valueOf(errorMessage), HttpHeaders.EMPTY,request);
+        return exceptionAdviceHandler.handleConstraintViolationException(e, errorMessage);
     }
 
-    @Override
-    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public BaseResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
 
         Map<String, String> errors = new LinkedHashMap<>();
 
-        e.getBindingResult().getFieldErrors().stream()
+        e.getBindingResult().getFieldErrors()
                 .forEach(fieldError -> {
                     String fieldName = fieldError.getField();
                     String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
                     errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
                 });
 
-        return handleExceptionInternalArgs(e,HttpHeaders.EMPTY,ErrorStatus.valueOf("_BAD_REQUEST"),request,errors);
+        return exceptionAdviceHandler.handleMethodArgumentNotValidException(e, errors);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<Object> exception(Exception e, WebRequest request) {
+    @ExceptionHandler(value = ServerApplicationException.class)
+    public BaseResponse onThrowException(ServerApplicationException serverApplicationException) {
+        ErrorReasonDTO errorReasonHttpStatus = serverApplicationException.getErrorReason();
+        try {
+            return exceptionAdviceHandler.handleServerApplicationException(serverApplicationException, type.cast(errorReasonHttpStatus));
+        } catch (Exception e) {
+            return exceptionAdviceHandler.handleException(e);
+        }
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public BaseResponse exception(Exception e) {
         e.printStackTrace();
 
-        return handleExceptionInternalFalse(e, ErrorStatus._INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, ErrorStatus._INTERNAL_SERVER_ERROR.getHttpStatus(),request, e.getMessage());
+        return exceptionAdviceHandler.handleException(e);
     }
 
-    @ExceptionHandler(value = GeneralException.class)
-    public ResponseEntity<Object> onThrowException(GeneralException generalException, HttpServletRequest request) {
-        ErrorReasonDTO errorReasonHttpStatus = generalException.getErrorReasonHttpStatus();
-        return handleExceptionInternal(generalException,errorReasonHttpStatus,null,request);
-    }
-
-    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorReasonDTO reason,
-                                                           HttpHeaders headers, HttpServletRequest request) {
-
-        ApiResponse<Object> body = ApiResponse.onFailure(reason.getCode(),reason.getMessage(),null);
-//        e.printStackTrace();
-
-        WebRequest webRequest = new ServletWebRequest(request);
-        return super.handleExceptionInternal(
-                e,
-                body,
-                headers,
-                reason.getHttpStatus(),
-                webRequest
-        );
-    }
-
-    private ResponseEntity<Object> handleExceptionInternalFalse(Exception e, ErrorStatus errorCommonStatus,
-                                                                HttpHeaders headers, HttpStatus status, WebRequest request, String errorPoint) {
-        ApiResponse<Object> body = ApiResponse.onFailure(errorCommonStatus.getCode(),errorCommonStatus.getMessage(),errorPoint);
-        return super.handleExceptionInternal(
-                e,
-                body,
-                headers,
-                status,
-                request
-        );
-    }
-
-    private ResponseEntity<Object> handleExceptionInternalArgs(Exception e, HttpHeaders headers, ErrorStatus errorCommonStatus,
-                                                               WebRequest request, Map<String, String> errorArgs) {
-        ApiResponse<Object> body = ApiResponse.onFailure(errorCommonStatus.getCode(),errorCommonStatus.getMessage(),errorArgs);
-        return super.handleExceptionInternal(
-                e,
-                body,
-                headers,
-                errorCommonStatus.getHttpStatus(),
-                request
-        );
-    }
-
-    private ResponseEntity<Object> handleExceptionInternalConstraint(Exception e, ErrorStatus errorCommonStatus,
-                                                                     HttpHeaders headers, WebRequest request) {
-        ApiResponse<Object> body = ApiResponse.onFailure(errorCommonStatus.getCode(), errorCommonStatus.getMessage(), null);
-        return super.handleExceptionInternal(
-                e,
-                body,
-                headers,
-                errorCommonStatus.getHttpStatus(),
-                request
-        );
-    }
 }

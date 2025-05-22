@@ -1,16 +1,16 @@
 package org.namu.apiPayload.code;
 
-import org.namu.apiPayload.code.dto.ErrorReasonDTO;
+import org.namu.apiPayload.code.dto.supports.DefaultResponseErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * The enum containing basic failure data
+ * The default enum containing basic failure data
  */
 @Getter
 @AllArgsConstructor
-public enum ErrorStatus implements BaseErrorCode {
+public enum DefaultResponseErrorCode implements BaseErrorCode {
     _INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON500", "서버 에러, 관리자에게 문의 바랍니다."),
     _BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON400", "잘못된 요청입니다."),
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON401", "인증이 필요합니다."),
@@ -24,22 +24,12 @@ public enum ErrorStatus implements BaseErrorCode {
     private final String message;
 
     @Override
-    public ErrorReasonDTO getReason() {
-        return ErrorReasonDTO.builder()
+    public DefaultResponseErrorReasonDTO getReason() {
+        return DefaultResponseErrorReasonDTO.builder()
                 .message(this.message)
                 .code(this.code)
-                .isSuccess(true)
+                .isSuccess(false)
                 .build();
     }
 
-    @Override
-    public ErrorReasonDTO getReasonHttpStatus() {
-        return ErrorReasonDTO.builder()
-                .message(this.message)
-                .code(this.code)
-                .isSuccess(true)
-                .httpStatus(this.httpStatus)
-                .build()
-                ;
-    }
 }

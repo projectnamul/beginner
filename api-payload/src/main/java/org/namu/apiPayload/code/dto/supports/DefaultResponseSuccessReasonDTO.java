@@ -1,20 +1,19 @@
-package org.namu.apiPayload.code.dto;
+package org.namu.apiPayload.code.dto.supports;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.namu.apiPayload.code.dto.SuccessReasonDTO;
 import org.springframework.http.HttpStatus;
 
 /**
- * The class that contains information about success
+ * The default ReasonDTO
  */
 @Getter
 @Builder
-public class ReasonDTO {
+public class DefaultResponseSuccessReasonDTO implements SuccessReasonDTO {
     private HttpStatus httpStatus;
 
     private final boolean isSuccess;
     private final String code;
     private final String message;
-
-    public boolean getIsSuccess(){return this.isSuccess;}
 }
