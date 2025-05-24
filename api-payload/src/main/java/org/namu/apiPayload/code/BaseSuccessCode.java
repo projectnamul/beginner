@@ -1,12 +1,14 @@
 package org.namu.apiPayload.code;
 
-import org.namu.apiPayload.code.dto.ReasonDTO;
+import org.namu.apiPayload.code.dto.SuccessReasonDTO;
 
 /**
  * Interface for implementing data on success
  */
 public interface BaseSuccessCode {
-    ReasonDTO getReason();
-
-    ReasonDTO getReasonHttpStatus();
+    /**
+     * The method to get SuccessReasonDTO
+     * @return The SuccessReasonDTO contains data about success
+     */
+    SuccessReasonDTO getReason();
 }

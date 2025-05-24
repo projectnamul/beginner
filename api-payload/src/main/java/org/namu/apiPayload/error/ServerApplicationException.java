@@ -6,18 +6,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Top-level exception that occurs when an application fails
+ * The exception that has failure data as BaseErrorCode
  */
 @Getter
 @RequiredArgsConstructor
-public class GeneralException extends RuntimeException {
+public class ServerApplicationException extends RuntimeException{
 
     private final BaseErrorCode code;
     public ErrorReasonDTO getErrorReason() {
         return this.code.getReason();
-    }
-
-    public ErrorReasonDTO getErrorReasonHttpStatus(){
-        return this.code.getReasonHttpStatus();
     }
 }
