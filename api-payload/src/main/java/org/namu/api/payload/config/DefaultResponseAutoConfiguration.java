@@ -1,9 +1,9 @@
-package org.namu.apiPayload.config;
+package org.namu.api.payload.config;
 
-import org.namu.apiPayload.util.DefaultResponseWriteUtil;
-import org.namu.apiPayload.util.ResponseWriteUtil;
-import org.namu.apiPayload.writer.DefaultResponseWriter;
-import org.namu.apiPayload.writer.ResponseWriter;
+import org.namu.api.payload.writer.ResponseWriter;
+import org.namu.api.payload.util.DefaultResponseWriteUtil;
+import org.namu.api.payload.util.ResponseWriteUtil;
+import org.namu.api.payload.writer.DefaultResponseWriter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

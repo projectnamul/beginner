@@ -1,4 +1,4 @@
-package org.namu.apiPayload.response;
+package org.namu.api.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

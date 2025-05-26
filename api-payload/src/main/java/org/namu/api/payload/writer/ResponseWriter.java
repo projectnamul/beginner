@@ -1,7 +1,7 @@
-package org.namu.apiPayload.writer;
+package org.namu.api.payload.writer;
 
-import org.namu.apiPayload.code.BaseSuccessCode;
-import org.namu.apiPayload.response.BaseResponse;
+import org.namu.api.payload.code.BaseSuccessCode;
+import org.namu.api.payload.response.BaseResponse;
 
 /**
  * The class that write responses in case of success, Commonly used in RestController

@@ -1,6 +1,6 @@
-package org.namu.apiPayload.code;
+package org.namu.api.payload.code;
 
-import org.namu.apiPayload.code.dto.SuccessReasonDTO;
+import org.namu.api.payload.code.dto.SuccessReasonDTO;
 
 /**
  * Interface for implementing data on success

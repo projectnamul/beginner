@@ -1,8 +1,8 @@
-package org.namu.apiPayload.util;
+package org.namu.api.payload.util;
 
-import org.namu.apiPayload.code.dto.ErrorReasonDTO;
-import org.namu.apiPayload.code.dto.SuccessReasonDTO;
-import org.namu.apiPayload.response.BaseResponse;
+import org.namu.api.payload.code.dto.ErrorReasonDTO;
+import org.namu.api.payload.code.dto.SuccessReasonDTO;
+import org.namu.api.payload.response.BaseResponse;
 
 /**
  * The util class generating the same response for failure and success
