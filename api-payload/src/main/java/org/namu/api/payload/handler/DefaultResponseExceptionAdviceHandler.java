@@ -1,13 +1,13 @@
-package org.namu.apiPayload.handler;
+package org.namu.api.payload.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
-import org.namu.apiPayload.code.DefaultResponseErrorCode;
-import org.namu.apiPayload.code.dto.supports.DefaultResponseErrorReasonDTO;
-import org.namu.apiPayload.code.dto.supports.DefaultResponseSuccessReasonDTO;
-import org.namu.apiPayload.error.ServerApplicationException;
-import org.namu.apiPayload.response.BaseResponse;
-import org.namu.apiPayload.util.ResponseWriteUtil;
+import org.namu.api.payload.response.BaseResponse;
+import org.namu.api.payload.util.ResponseWriteUtil;
+import org.namu.api.payload.code.DefaultResponseErrorCode;
+import org.namu.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO;
+import org.namu.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO;
+import org.namu.api.payload.error.ServerApplicationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 

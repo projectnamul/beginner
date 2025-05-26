@@ -1,6 +1,6 @@
-package org.namu.apiPayload.code;
+package org.namu.api.payload.code;
 
-import org.namu.apiPayload.code.dto.supports.DefaultResponseSuccessReasonDTO;
+import org.namu.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

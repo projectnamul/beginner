@@ -1,16 +1,16 @@
-package org.namu.apiPayload.code.dto.supports;
+package org.namu.api.payload.code.dto.supports;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.namu.apiPayload.code.dto.SuccessReasonDTO;
+import org.namu.api.payload.code.dto.ErrorReasonDTO;
 import org.springframework.http.HttpStatus;
 
 /**
- * The default ReasonDTO
+ * The default ErrorReasonDTO
  */
 @Getter
 @Builder
-public class DefaultResponseSuccessReasonDTO implements SuccessReasonDTO {
+public class DefaultResponseErrorReasonDTO implements ErrorReasonDTO {
     private HttpStatus httpStatus;
 
     private final boolean isSuccess;

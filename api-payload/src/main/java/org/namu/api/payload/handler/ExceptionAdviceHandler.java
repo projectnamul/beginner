@@ -1,9 +1,9 @@
-package org.namu.apiPayload.handler;
+package org.namu.api.payload.handler;
 
 import jakarta.validation.ConstraintViolationException;
-import org.namu.apiPayload.code.dto.ErrorReasonDTO;
-import org.namu.apiPayload.error.ServerApplicationException;
-import org.namu.apiPayload.response.BaseResponse;
+import org.namu.api.payload.code.dto.ErrorReasonDTO;
+import org.namu.api.payload.error.ServerApplicationException;
+import org.namu.api.payload.response.BaseResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 /**

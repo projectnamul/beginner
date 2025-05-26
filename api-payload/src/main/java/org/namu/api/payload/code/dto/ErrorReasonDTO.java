@@ -1,4 +1,4 @@
-package org.namu.apiPayload.code.dto;
+package org.namu.api.payload.code.dto;
 
 /**
  * The interface that contains information about failures

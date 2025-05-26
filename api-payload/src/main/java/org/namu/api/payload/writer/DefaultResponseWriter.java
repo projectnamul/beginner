@@ -1,10 +1,10 @@
-package org.namu.apiPayload.writer;
+package org.namu.api.payload.writer;
 
 import lombok.RequiredArgsConstructor;
-import org.namu.apiPayload.code.DefaultResponseSuccessCode;
-import org.namu.apiPayload.code.BaseSuccessCode;
-import org.namu.apiPayload.util.DefaultResponseWriteUtil;
-import org.namu.apiPayload.response.BaseResponse;
+import org.namu.api.payload.code.BaseSuccessCode;
+import org.namu.api.payload.response.BaseResponse;
+import org.namu.api.payload.util.DefaultResponseWriteUtil;
+import org.namu.api.payload.code.DefaultResponseSuccessCode;
 import org.springframework.stereotype.Component;
 
 /**

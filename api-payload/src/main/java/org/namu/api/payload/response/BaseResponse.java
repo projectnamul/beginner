@@ -1,4 +1,4 @@
-package org.namu.apiPayload.response;
+package org.namu.api.payload.response;
 
 /**
  * The top-level response interface

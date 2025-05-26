@@ -1,9 +1,9 @@
-package org.namu.apiPayload.util;
+package org.namu.api.payload.util;
 
-import org.namu.apiPayload.code.dto.supports.DefaultResponseErrorReasonDTO;
-import org.namu.apiPayload.code.dto.supports.DefaultResponseSuccessReasonDTO;
-import org.namu.apiPayload.response.DefaultResponse;
-import org.namu.apiPayload.response.BaseResponse;
+import org.namu.api.payload.response.DefaultResponse;
+import org.namu.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO;
+import org.namu.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO;
+import org.namu.api.payload.response.BaseResponse;
 
 public class DefaultResponseWriteUtil implements ResponseWriteUtil<DefaultResponseErrorReasonDTO, DefaultResponseSuccessReasonDTO> {
 

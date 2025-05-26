@@ -1,11 +1,11 @@
-package org.namu.apiPayload.error;
+package org.namu.api.payload.error;
 
 import jakarta.validation.ConstraintViolation;
-import org.namu.apiPayload.code.dto.ErrorReasonDTO;
+import org.namu.api.payload.code.dto.ErrorReasonDTO;
+import org.namu.api.payload.handler.ExceptionAdviceHandler;
+import org.namu.api.payload.response.BaseResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.namu.apiPayload.handler.ExceptionAdviceHandler;
-import org.namu.apiPayload.response.BaseResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
