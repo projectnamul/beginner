@@ -1,83 +1,19 @@
 package org.namu.api.payload.error;
 
-import jakarta.validation.ConstraintViolation;
-import org.namu.api.payload.code.dto.ErrorReasonDTO;
-import org.namu.api.payload.handler.ExceptionAdviceHandler;
-import org.namu.api.payload.response.BaseResponse;
-import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * The Exception Handler for RestController, this contains ConstraintViolationException, MethodArgumentNotValidException, ServerApplicationException, Exception
- * @param <E> ErrorReasonDTO, The type of data returned by BaseErrorCode in ServerException
+ * The class for Error handling when error occurs.
+ * @param <R> The return type after handling exception
+ * @param <T> The exception type which will be handled
  */
-@Slf4j
-@Component
-@RestControllerAdvice(annotations = {RestController.class})
-public class ExceptionAdvice<E extends ErrorReasonDTO> {
-
-    private final ExceptionAdviceHandler<E> exceptionAdviceHandler;
-    private final Class<E> type;
+public interface ExceptionAdvice<R, T extends Exception> {
 
     /**
-     * The constructor with ExceptionAdviceHandler, type
-     * @param exceptionAdviceHandler The class that generate responses with ErrorReasonDTO
-     * @param type The Type of ErrorReasonDTO
+     * Handle method when exception occurs
+     * @param e The Exception type
+     * @return The Response value after handling exception
      */
-    public ExceptionAdvice(ExceptionAdviceHandler<E> exceptionAdviceHandler, Class<E> type) {
-        this.exceptionAdviceHandler = exceptionAdviceHandler;
-        this.type = type;
-    }
-
-    @ExceptionHandler(value = ConstraintViolationException.class)
-    public BaseResponse validation(ConstraintViolationException e) {
-        String errorMessage = e.getConstraintViolations().stream()
-                .map(ConstraintViolation::getMessage)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("ConstraintViolationException 추출 도중 에러 발생"));
-
-        return exceptionAdviceHandler.handleConstraintViolationException(e, errorMessage);
-    }
-
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public BaseResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
-
-        Map<String, String> errors = new LinkedHashMap<>();
-
-        e.getBindingResult().getFieldErrors()
-                .forEach(fieldError -> {
-                    String fieldName = fieldError.getField();
-                    String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
-                    errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
-                });
-
-        return exceptionAdviceHandler.handleMethodArgumentNotValidException(e, errors);
-    }
-
-    @ExceptionHandler(value = ServerApplicationException.class)
-    public BaseResponse onThrowException(ServerApplicationException serverApplicationException) {
-        ErrorReasonDTO errorReasonHttpStatus = serverApplicationException.getErrorReason();
-        try {
-            return exceptionAdviceHandler.handleServerApplicationException(serverApplicationException, type.cast(errorReasonHttpStatus));
-        } catch (Exception e) {
-            return exceptionAdviceHandler.handleException(e);
-        }
-    }
-
-    @ExceptionHandler(value = Exception.class)
-    public BaseResponse exception(Exception e) {
-        e.printStackTrace();
-
-        return exceptionAdviceHandler.handleException(e);
-    }
-
+    R handle(T e, HttpServletRequest request, HttpServletResponse response);
 }

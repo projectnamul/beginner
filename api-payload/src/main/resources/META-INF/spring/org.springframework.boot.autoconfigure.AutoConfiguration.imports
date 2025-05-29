@@ -1,1 +1,2 @@
 org.namu.api.payload.config.DefaultResponseAutoConfiguration
+org.namu.api.payload.config.ExceptionAdviceAutoConfiguration
