@@ -18,6 +18,10 @@ public abstract class AbstractBaseResponse<T> implements BaseResponse {
     @JsonProperty("result")
     private final T result;
 
+    protected AbstractBaseResponse(T result) {
+        this(null, null, result);
+    }
+
     protected AbstractBaseResponse(String code, String message, T result) {
         this.code = code;
         this.message = message;

@@ -21,6 +21,6 @@ public class ServerApplicationExceptionAdvice implements ExceptionAdvice<BaseRes
 
         ErrorReasonDTO errorReason = e.getErrorReason();
 
-        return exceptionHandlerRegistry.getHandler(ServerApplicationException.class).handleException(e, errorReason, errorReason.getMessage());
+        return exceptionHandlerRegistry.getHandler(ServerApplicationException.class).handleException(e, errorReason, null);
     }
 }
