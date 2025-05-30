@@ -14,13 +14,9 @@ public class DefaultResponse<T> extends AbstractBaseResponse<T> {
 
     @JsonProperty("isSuccess")
     private final Boolean isSuccess;
-    private final String code;
-    private final String message;
 
     public DefaultResponse(Boolean isSuccess, String code, String message, T result) {
-        super(result);
+        super(code, message, result);
         this.isSuccess = isSuccess;
-        this.code = code;
-        this.message = message;
     }
 }

@@ -8,18 +8,20 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
+
 @AutoConfiguration
 public class DefaultResponseAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(ResponseWriter.class)
     ResponseWriter responseWriter() {
-        return new DefaultResponseWriter(responseWriteUtil());
+        return new DefaultResponseWriter(defaultResponseWriteUtil());
     }
 
     @Bean
     @ConditionalOnMissingBean(ResponseWriteUtil.class)
-    DefaultResponseWriteUtil responseWriteUtil() {
+    ResponseWriteUtil defaultResponseWriteUtil() {
         return new DefaultResponseWriteUtil();
     }
+
 }

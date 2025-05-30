@@ -1,5 +1,6 @@
 package org.namu.api.payload.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
@@ -10,10 +11,20 @@ import lombok.Getter;
 @Getter
 public abstract class AbstractBaseResponse<T> implements BaseResponse {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final String code;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final String message;
     @JsonProperty("result")
     private final T result;
 
     protected AbstractBaseResponse(T result) {
+        this(null, null, result);
+    }
+
+    protected AbstractBaseResponse(String code, String message, T result) {
+        this.code = code;
+        this.message = message;
         this.result = result;
     }
 }
