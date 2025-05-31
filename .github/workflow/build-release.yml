@@ -1,0 +1,44 @@
+name: Maven Deploy to OSSRH
+
+on:
+  push:
+    tags:
+      - '*'  # 태그 푸시 시 배포 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '11'
+          server-id: central     # settings.xml 안 서버 id
+          server-username: ${{ secrets.OSSRH_USERNAME }}
+          server-password: ${{ secrets.OSSRH_PASSWORD }}
+          settings-path: ${{ github.workspace }}
+
+      - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          gpgconf --kill gpg-agent
+          echo RELOADAGENT | gpg-connect-agent
+
+      - name: Write Maven settings.xml
+        run: echo "${{ secrets.MAVEN_SETTINGS_XML }}" > ${{ github.workspace }}/settings.xml
+
+      - name: Deploy to Maven Central
+        env:
+          GPG_TTY: $(tty)
+          GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: mvn clean deploy -s ${{ github.workspace }}/settings.xml -P central --batch-mode -Dgpg.keyname=$GPG_KEYNAME -Dgpg.passphrase=$GPG_PASSPHRASE
