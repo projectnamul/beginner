@@ -17,17 +17,22 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: '11'
+          java-version: '17'
           server-id: central     # settings.xml 안 서버 id
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_PASSWORD }}
           settings-path: ${{ github.workspace }}
+
+      - name: Install GPG
+        run: sudo apt-get update && sudo apt-get install -y gnupg2
 
       - name: Import GPG key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
           echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           gpgconf --kill gpg-agent
@@ -38,7 +43,8 @@ jobs:
 
       - name: Deploy to Maven Central
         env:
-          GPG_TTY: $(tty)
           GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: mvn clean deploy -s ${{ github.workspace }}/settings.xml -P central --batch-mode -Dgpg.keyname=$GPG_KEYNAME -Dgpg.passphrase=$GPG_PASSPHRASE
+        run: |
+          export GPG_TTY=$(tty)
+          mvn clean deploy -s ${{ github.workspace }}/settings.xml -P central --batch-mode -Dgpg.keyname=$GPG_KEYNAME -Dgpg.passphrase=$GPG_PASSPHRASE -Dgpg.pinentry-mode=loopback
