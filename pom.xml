@@ -4,7 +4,7 @@
 
   <groupId>org.namul</groupId>
   <artifactId>beginner</artifactId>
-  <version>0.1.3</version>
+  <version>0.1.4</version>
   <packaging>pom</packaging>
 
   <description>
@@ -141,7 +141,6 @@
         <extensions>true</extensions>
         <configuration>
           <publishingServerId>central</publishingServerId>
-          <autoPublish>true</autoPublish>
         </configuration>
       </plugin>
 
