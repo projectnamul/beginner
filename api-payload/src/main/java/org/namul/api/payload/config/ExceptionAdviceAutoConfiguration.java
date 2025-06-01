@@ -2,12 +2,12 @@ package org.namul.api.payload.config;
 
 import jakarta.validation.ConstraintViolationException;
 import org.namul.api.payload.error.*;
-import org.namul.api.payload.handler.ConstraintViolationExceptionHandler;
-import org.namul.api.payload.handler.GlobalExceptionHandler;
-import org.namul.api.payload.handler.MethodArgumentNotValidExceptionHandler;
-import org.namul.api.payload.handler.ServerApplicationExceptionHandler;
+import org.namul.api.payload.error.configurer.ExceptionAdviceConfigurer;
+import org.namul.api.payload.error.exception.ServerApplicationException;
+import org.namul.api.payload.handler.*;
 import org.namul.api.payload.registry.ExceptionHandlerRegistry;
-import org.namul.api.payload.util.ResponseWriteUtil;
+import org.namul.api.payload.writer.FailureResponseWriter;
+import org.namul.api.payload.writer.supports.DefaultFailureResponseWriter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -21,25 +21,31 @@ import java.util.Optional;
 public class ExceptionAdviceAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(FailureResponseWriter.class)
+    DefaultFailureResponseWriter defaultFailureResponseWriter() {
+        return new DefaultFailureResponseWriter();
+    }
+
+    @Bean
     @ConditionalOnClass(ConstraintViolationException.class)
-    ConstraintViolationExceptionHandler constraintViolationExceptionHandler(ResponseWriteUtil responseWriteUtil ) {
-        return new ConstraintViolationExceptionHandler(responseWriteUtil);
+    ConstraintViolationExceptionHandler constraintViolationExceptionHandler(FailureResponseWriter failureResponseWriter) {
+        return new ConstraintViolationExceptionHandler(failureResponseWriter);
     }
 
     @Bean
     @ConditionalOnClass(MethodArgumentNotValidException.class)
-    MethodArgumentNotValidExceptionHandler methodArgumentNotValidExceptionHandler(ResponseWriteUtil responseWriteUtil ) {
-        return new MethodArgumentNotValidExceptionHandler(responseWriteUtil);
+    MethodArgumentNotValidExceptionHandler methodArgumentNotValidExceptionHandler(FailureResponseWriter failureResponseWriter) {
+        return new MethodArgumentNotValidExceptionHandler(failureResponseWriter);
     }
 
     @Bean
-    ServerApplicationExceptionHandler serverApplicationExceptionHandler(ResponseWriteUtil responseWriteUtil ) {
-        return new ServerApplicationExceptionHandler(responseWriteUtil);
+    ServerApplicationExceptionHandler serverApplicationExceptionHandler(FailureResponseWriter failureResponseWriter) {
+        return new ServerApplicationExceptionHandler(failureResponseWriter);
     }
 
     @Bean
-    GlobalExceptionHandler globalExceptionHandler(ResponseWriteUtil responseWriteUtil ) {
-        return new GlobalExceptionHandler(responseWriteUtil);
+    GlobalExceptionHandler globalExceptionHandler(FailureResponseWriter failureResponseWriter) {
+        return new GlobalExceptionHandler(failureResponseWriter);
     }
 
     @Bean

@@ -1,19 +1,19 @@
 package org.namul.api.payload.writer;
 
-import org.namul.api.payload.code.BaseSuccessCode;
+import org.namul.api.payload.code.dto.SuccessReasonDTO;
 import org.namul.api.payload.response.BaseResponse;
 
 /**
- * The class that write responses in case of success, Commonly used in RestController
+ * The class that write responses in case of success
  */
-public interface ResponseWriter {
+public interface SuccessResponseWriter<R extends BaseResponse, S extends SuccessReasonDTO> {
     /**
      * The method generate a response in case of success (OK)
      * @param result The response data value
      * @return The unified response
      * @param <T> The type of response data
      */
-    <T> BaseResponse ok(T result);
+    <T> R ok(T result);
 
     /**
      * The method generate a response in case of success (CREATED)
@@ -21,7 +21,7 @@ public interface ResponseWriter {
      * @return The unified response
      * @param <T> The type of response data
      */
-    <T> BaseResponse created(T result);
+    <T> R created(T result);
 
     /**
      * The method generate a response in case of success (NO_CONTENT)
@@ -29,7 +29,7 @@ public interface ResponseWriter {
      * @return The unified response
      * @param <T> The type of response data
      */
-    <T> BaseResponse noContent(T result);
+    <T> R noContent(T result);
 
     /**
      * The method generate a response in case of success with BaseSuccessCode
@@ -38,5 +38,5 @@ public interface ResponseWriter {
      * @return The unified response
      * @param <T> The type of response data
      */
-    <T> BaseResponse onSuccess(BaseSuccessCode code, T result);
+    <T> R onSuccess(S code, T result);
 }
