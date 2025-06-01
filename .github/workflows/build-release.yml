@@ -1,9 +1,9 @@
-name: Maven Deploy to OSSRH
+name: Maven Deploy to Central
 
 on:
   push:
     tags:
-      - '*'  # 태그 푸시 시 배포 실행
+      - '*'
 
 jobs:
   deploy:
@@ -18,7 +18,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          server-id: central     # settings.xml 안 서버 id
+          server-id: central
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_PASSWORD }}
           settings-path: ${{ github.workspace }}
@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import > /dev/null 2>&1
           echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           gpgconf --kill gpg-agent
           echo RELOADAGENT | gpg-connect-agent
