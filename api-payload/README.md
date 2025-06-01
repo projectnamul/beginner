@@ -9,10 +9,18 @@ Because DefaultResponseWriteUtil and DefaultResponseWriter is already registered
 
 ```java
 @Configuration
+@RequiredArgsConstructor
 public class ExceptionAdviceConfig {
+
     @Bean
-    ExceptionAdvice<DefaultResponseErrorReasonDTO> exceptionAdvice(DefaultResponseWriteUtil responseWriteUtil) {
-        return new ExceptionAdvice<>(new DefaultResponseExceptionAdviceHandler(responseWriteUtil), DefaultResponseErrorReasonDTO.class);
+    ExceptionAdviceConfigurer exceptionAdviceConfigurer(ExceptionHandlerRegistry exceptionHandlerRegistry) {
+        ExceptionAdviceConfigurer exceptionAdviceConfigurer = new ExceptionAdviceConfigurer(exceptionHandlerRegistry);
+        return exceptionAdviceConfigurer
+                .withDefault()
+                .enableMethodArgumentNotValidExceptionAdvice(DefaultResponseErrorCode._BAD_REQUEST)
+                .enableConstraintViolationExceptionAdvice(DefaultResponseErrorCode._BAD_REQUEST)
+                .enableGlobalExceptionAdvice(DefaultResponseErrorCode._INTERNAL_SERVER_ERROR)
+                ;
     }
 }
 ```
@@ -26,10 +34,10 @@ You can use DefaultResponseWriter which is already registered in bean with DI
 @RequiredArgsConstructor
 public class TestController {
 
-    private final ResponseWriter responseWriter;
+    private final DefaultSuccessResponseWriter responseWriter;
 
     @GetMapping("/success")
-    public BaseResponse success() {
+    public DefaultResponse<String> success() {
         return responseWriter.ok("success"); // you can use DTO class instead of "success"
     }
 }
@@ -42,6 +50,5 @@ You can make custom response by implementing BaseResponse, ErrorReasonDTO, Succe
 
 1. Make custom BaseResponse
 2. Make custom ErrorReasonDTO, SuccessReasonDTO
-3. Make custom ResponseWriteUtil
-4. Make custom ExceptionAdviceHandler, ResponseWriter
-5. Register your custom Util, Handler, Writer in bean
+3. Make custom SuccessResponseWriter, FailureResponseWriter 
+4. Register your custom Util, Handler, Writer in bean
