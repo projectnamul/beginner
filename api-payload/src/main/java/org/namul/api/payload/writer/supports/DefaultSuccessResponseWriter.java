@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class DefaultSuccessResponseWriter implements SuccessResponseWriter<DefaultResponse<?>, DefaultResponseSuccessReasonDTO> {
+public class DefaultSuccessResponseWriter implements SuccessResponseWriter<DefaultResponseSuccessReasonDTO> {
 
     @Override
     public <T> DefaultResponse<T> ok(T result) {
