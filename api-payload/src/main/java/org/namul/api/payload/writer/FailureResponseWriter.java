@@ -6,7 +6,7 @@ import org.namul.api.payload.response.BaseResponse;
 /**
  * The class that write responses in case of failure
  */
-public interface FailureResponseWriter<R extends BaseResponse,  E extends ErrorReasonDTO> {
+public interface FailureResponseWriter<R extends ErrorReasonDTO> {
 
     /**
      * Make failure response
@@ -15,5 +15,5 @@ public interface FailureResponseWriter<R extends BaseResponse,  E extends ErrorR
      * @return The generated return value
      * @param <T> The generic for result value
      */
-    <T> R onFailure(E error, T result);
+    <T> BaseResponse onFailure(R error, T result);
 }

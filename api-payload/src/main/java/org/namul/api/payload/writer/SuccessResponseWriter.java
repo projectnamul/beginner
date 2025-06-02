@@ -6,14 +6,14 @@ import org.namul.api.payload.response.BaseResponse;
 /**
  * The class that write responses in case of success
  */
-public interface SuccessResponseWriter<R extends BaseResponse, S extends SuccessReasonDTO> {
+public interface SuccessResponseWriter<R extends SuccessReasonDTO> {
     /**
      * The method generate a response in case of success (OK)
      * @param result The response data value
      * @return The unified response
      * @param <T> The type of response data
      */
-    <T> R ok(T result);
+    <T> BaseResponse ok(T result);
 
     /**
      * The method generate a response in case of success (CREATED)
@@ -21,7 +21,7 @@ public interface SuccessResponseWriter<R extends BaseResponse, S extends Success
      * @return The unified response
      * @param <T> The type of response data
      */
-    <T> R created(T result);
+    <T> BaseResponse created(T result);
 
     /**
      * The method generate a response in case of success (NO_CONTENT)
@@ -29,7 +29,7 @@ public interface SuccessResponseWriter<R extends BaseResponse, S extends Success
      * @return The unified response
      * @param <T> The type of response data
      */
-    <T> R noContent(T result);
+    <T> BaseResponse noContent(T result);
 
     /**
      * The method generate a response in case of success with BaseSuccessCode
@@ -38,5 +38,5 @@ public interface SuccessResponseWriter<R extends BaseResponse, S extends Success
      * @return The unified response
      * @param <T> The type of response data
      */
-    <T> R onSuccess(S code, T result);
+    <T> BaseResponse onSuccess(R code, T result);
 }

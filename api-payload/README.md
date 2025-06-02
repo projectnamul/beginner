@@ -13,14 +13,8 @@ Because DefaultResponseWriteUtil and DefaultResponseWriter is already registered
 public class ExceptionAdviceConfig {
 
     @Bean
-    ExceptionAdviceConfigurer exceptionAdviceConfigurer(ExceptionHandlerRegistry exceptionHandlerRegistry) {
-        ExceptionAdviceConfigurer exceptionAdviceConfigurer = new ExceptionAdviceConfigurer(exceptionHandlerRegistry);
-        return exceptionAdviceConfigurer
-                .withDefault()
-                .enableMethodArgumentNotValidExceptionAdvice(DefaultResponseErrorCode._BAD_REQUEST)
-                .enableConstraintViolationExceptionAdvice(DefaultResponseErrorCode._BAD_REQUEST)
-                .enableGlobalExceptionAdvice(DefaultResponseErrorCode._INTERNAL_SERVER_ERROR)
-                ;
+    ExceptionAdviceConfigurer<DefaultResponseErrorReasonDTO> defaultExceptionAdviceConfigurer(FailureResponseWriter<DefaultResponseErrorReasonDTO> failureResponseWriter) {
+        return new DefaultExceptionAdviceConfigurer(failureResponseWriter);
     }
 }
 ```
@@ -51,4 +45,26 @@ You can make custom response by implementing BaseResponse, ErrorReasonDTO, Succe
 1. Make custom BaseResponse
 2. Make custom ErrorReasonDTO, SuccessReasonDTO
 3. Make custom SuccessResponseWriter, FailureResponseWriter 
-4. Register your custom Util, Handler, Writer in bean
+4. Register your custom Handler, Writer in bean
+
+### how to add custom handler in ExceptionAdvice
+```java
+@Configuration
+@RequiredArgsConstructor
+public class ExceptionAdviceConfig {
+
+    private final CustomFailureResponseWriter customFailureResponseWriter;
+    private final CustomServerApplicationExceptionHandler customServerApplicationExceptionHandler;
+
+    @Bean
+    ExceptionAdviceConfigurer<CustomErrorReasonDTO> exceptionAdviceConfigurer() {
+        ExceptionAdviceConfigurer<CustomErrorReasonDTO> configurer = new ExceptionAdviceConfigurer<>(customFailureResponseWriter); // Apply response writer when exception occurs
+        configurer.addConstraintViolation(CustomErrorCode.ERROR.getReason()); // apply with default handler
+        configurer.addMethodArgumentNotValid(CustomErrorCode.ERROR.getReason());
+        configurer.addServerApplication(customServerApplicationExceptionHandler, CustomErrorCode.ERROR.getReason()); // apply custom handler
+        configurer.addGlobalException(CustomErrorCode.BAD_ERROR.getReason());
+        return configurer;
+    }
+
+}
+```

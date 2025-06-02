@@ -1,18 +1,33 @@
 package org.namul.api.payload.handler;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.response.BaseResponse;
 import org.namul.api.payload.writer.FailureResponseWriter;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-@RequiredArgsConstructor
-public class MethodArgumentNotValidExceptionHandler implements ExceptionAdviceHandler<MethodArgumentNotValidException> {
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
-    private final FailureResponseWriter failureResponseWriter;
+@RequiredArgsConstructor
+public class MethodArgumentNotValidExceptionHandler<R extends ErrorReasonDTO> implements ExceptionAdviceHandler<MethodArgumentNotValidException, R> {
+
+    private final FailureResponseWriter<R> failureResponseWriter;
 
     @Override
-    public <T> BaseResponse handleException(MethodArgumentNotValidException e, ErrorReasonDTO errorReasonDTO, T result) {
-        return failureResponseWriter.onFailure(errorReasonDTO, result);
+    public BaseResponse handleException(MethodArgumentNotValidException e, HttpServletRequest request, HttpServletResponse response, R errorReasonDTO) {
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        e.getBindingResult().getFieldErrors()
+                .forEach(fieldError -> {
+                    String fieldName = fieldError.getField();
+                    String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
+                    errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
+                });
+
+        return failureResponseWriter.onFailure(errorReasonDTO, errors);
     }
 }
