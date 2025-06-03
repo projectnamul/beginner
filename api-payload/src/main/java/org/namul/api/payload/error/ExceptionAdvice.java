@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.error.configurer.ExceptionAdviceConfigurer;
-import org.namul.api.payload.handler.ExceptionAdviceHandler;
 import org.namul.api.payload.response.BaseResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
