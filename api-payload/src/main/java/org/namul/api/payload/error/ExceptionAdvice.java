@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.error.configurer.ExceptionAdviceConfigurer;
-import org.namul.api.payload.handler.ExceptionAdviceHandler;
 import org.namul.api.payload.response.BaseResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -43,6 +42,8 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
      * @param <E> The exception type
      */
     private <E extends Exception> BaseResponse handleDelegated(E e, HttpServletRequest request, HttpServletResponse response, ExceptionAdviceRegistry<E, R> registry) {
-        return registry.getHandler().handleException(e, request, response, registry.getErrorReasonDTO());
+        R reasonDTO = registry.getErrorReasonDTO();
+        response.setStatus(reasonDTO.getHttpStatus().value());
+        return registry.getHandler().handleException(e, request, response, reasonDTO);
     }
 }
