@@ -42,6 +42,8 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
      * @param <E> The exception type
      */
     private <E extends Exception> BaseResponse handleDelegated(E e, HttpServletRequest request, HttpServletResponse response, ExceptionAdviceRegistry<E, R> registry) {
-        return registry.getHandler().handleException(e, request, response, registry.getErrorReasonDTO());
+        R reasonDTO = registry.getErrorReasonDTO();
+        response.setStatus(reasonDTO.getHttpStatus().value());
+        return registry.getHandler().handleException(e, request, response, reasonDTO);
     }
 }

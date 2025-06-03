@@ -26,6 +26,7 @@ public enum DefaultResponseErrorCode implements BaseErrorCode {
     @Override
     public DefaultResponseErrorReasonDTO getReason() {
         return DefaultResponseErrorReasonDTO.builder()
+                .httpStatus(this.httpStatus)
                 .message(this.message)
                 .code(this.code)
                 .isSuccess(false)
