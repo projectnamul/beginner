@@ -16,10 +16,15 @@ public class ConstraintViolationExceptionHandler<R extends ErrorReasonDTO> imple
 
     @Override
     public BaseResponse handleException(ConstraintViolationException e, HttpServletRequest request, HttpServletResponse response, R dto) {
-        String errorMessage = e.getConstraintViolations().stream()
+        Object errorMessage = getMessage(e, dto);
+        return failureResponseWriter.onFailure(dto, errorMessage);
+    }
+
+    @Override
+    public Object getMessage(ConstraintViolationException e, R errorReasonDTO) {
+        return e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("An error occurred while extracting the ConstraintViolationException."));
-        return failureResponseWriter.onFailure(dto, errorMessage);
     }
 }
