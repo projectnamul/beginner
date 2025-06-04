@@ -24,4 +24,9 @@ public class ServerApplicationExceptionHandler<R extends ErrorReasonDTO> impleme
             return failureResponseWriter.onFailure(errorReasonDTO, null);
         }
     }
+
+    @Override
+    public Object getMessage(ServerApplicationException e, R errorReasonDTO) {
+        return e.getCode();
+    }
 }

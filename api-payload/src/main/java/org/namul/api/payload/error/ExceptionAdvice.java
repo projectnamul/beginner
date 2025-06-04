@@ -3,8 +3,11 @@ package org.namul.api.payload.error;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.error.configurer.ExceptionAdviceConfigurer;
+import org.namul.api.payload.handler.ExceptionAdviceHandler;
+import org.namul.api.payload.log.ExceptionAdviceLogger;
 import org.namul.api.payload.response.BaseResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,11 +15,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * The class for Error handling when error occurs.
  */
+@Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ExceptionAdvice<R extends ErrorReasonDTO> {
 
     private final ExceptionAdviceConfigurer<R> exceptionAdviceConfigurer;
+    private final ExceptionAdviceLogger exceptionAdviceLogger;
 
     /**
      * Handle method when exception occurs
@@ -43,7 +48,11 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
      */
     private <E extends Exception> BaseResponse handleDelegated(E e, HttpServletRequest request, HttpServletResponse response, ExceptionAdviceRegistry<E, R> registry) {
         R reasonDTO = registry.getErrorReasonDTO();
+        ExceptionAdviceHandler<E, R> handler = registry.getHandler();
+
         response.setStatus(reasonDTO.getHttpStatus().value());
-        return registry.getHandler().handleException(e, request, response, reasonDTO);
+        exceptionAdviceLogger.log(e, reasonDTO, handler.getMessage(e, reasonDTO));
+
+        return handler.handleException(e, request, response, reasonDTO);
     }
 }
