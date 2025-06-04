@@ -17,4 +17,14 @@ public interface ExceptionAdviceHandler<E extends Exception, R extends ErrorReas
      * @return The unified response
      */
     BaseResponse handleException(E e, HttpServletRequest request, HttpServletResponse response, R errorReasonDTO);
+
+    /**
+     * The method for logging message
+     * @param e The exception is occurred
+     * @param errorReasonDTO The data about exception
+     * @return The error message for logging, it can be String, Map, etc.
+     */
+    default Object getMessage(E e, R errorReasonDTO) {
+        return e.getMessage();
+    }
 }

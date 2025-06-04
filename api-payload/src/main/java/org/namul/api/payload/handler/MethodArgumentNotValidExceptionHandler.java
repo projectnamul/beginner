@@ -19,6 +19,12 @@ public class MethodArgumentNotValidExceptionHandler<R extends ErrorReasonDTO> im
 
     @Override
     public BaseResponse handleException(MethodArgumentNotValidException e, HttpServletRequest request, HttpServletResponse response, R errorReasonDTO) {
+        Object message = getMessage(e, errorReasonDTO);
+        return failureResponseWriter.onFailure(errorReasonDTO, message);
+    }
+
+    @Override
+    public Object getMessage(MethodArgumentNotValidException e, R errorReasonDTO) {
         Map<String, String> errors = new LinkedHashMap<>();
 
         e.getBindingResult().getFieldErrors()
@@ -28,6 +34,6 @@ public class MethodArgumentNotValidExceptionHandler<R extends ErrorReasonDTO> im
                     errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
                 });
 
-        return failureResponseWriter.onFailure(errorReasonDTO, errors);
+        return errors;
     }
 }
