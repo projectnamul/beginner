@@ -25,11 +25,9 @@ public interface SuccessResponseWriter<R extends SuccessReasonDTO> {
 
     /**
      * The method generate a response in case of success (NO_CONTENT)
-     * @param result The response data value
      * @return The unified response
-     * @param <T> The type of response data
      */
-    <T> BaseResponse noContent(T result);
+    <T> BaseResponse noContent();
 
     /**
      * The method generate a response in case of success with BaseSuccessCode

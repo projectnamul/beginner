@@ -25,8 +25,8 @@ public class DefaultSuccessResponseWriter implements SuccessResponseWriter<Defau
     }
 
     @Override
-    public <T> DefaultResponse<T> noContent(T result) {
-        return this.onSuccess(DefaultResponseSuccessCode._DELETED.getReason(), result);
+    public <T> DefaultResponse<T> noContent() {
+        return this.onSuccess(DefaultResponseSuccessCode._DELETED.getReason(), null);
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
+import org.namul.api.payload.code.DefaultResponseSuccessCode;
+import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO;
 
 /**
  * The classes for Unifying Responses
@@ -25,5 +27,21 @@ public class DefaultResponse<T> extends AbstractBaseResponse<T> {
         this.code = code;
         this.message = message;
         this.isSuccess = isSuccess;
+    }
+
+    public static <T> DefaultResponse<T> ok(T result) {
+        return onSuccess(DefaultResponseSuccessCode._OK.getReason(), result);
+    }
+
+    public static <T> DefaultResponse<T> created(T result) {
+        return onSuccess(DefaultResponseSuccessCode._CREATED.getReason(), result);
+    }
+
+    public static <T> DefaultResponse<T> noContent() {
+        return onSuccess(DefaultResponseSuccessCode._DELETED.getReason(), null);
+    }
+
+    public static <T> DefaultResponse<T> onSuccess(DefaultResponseSuccessReasonDTO code, T result) {
+        return new DefaultResponse<>(code.isSuccess(), code.getCode(), code.getMessage(), result);
     }
 }
