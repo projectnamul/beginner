@@ -11,6 +11,8 @@
 
     <artifactId>api-payload</artifactId>
     <name>api-payload</name>
+    <description>Api Payload offers a unified response and exception advice for beginners. The unified response is customizable or default. ExceptionAdvice handles exceptions that occur in your application.</description>
+    <url>https://github.com/projectnamul/beginner</url>
 
     <licenses>
         <license>

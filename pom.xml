@@ -8,11 +8,11 @@
   <packaging>pom</packaging>
 
   <description>
-    The package for project beginner
+    Parent for beginner project
   </description>
 
-  <name>beginner</name>
-  <url>http://maven.apache.org</url>
+  <name>Beginner mvn parent</name>
+  <url>https://github.com/projectnamul/beginner</url>
   <modules>
     <module>api-payload</module>
   </modules>
