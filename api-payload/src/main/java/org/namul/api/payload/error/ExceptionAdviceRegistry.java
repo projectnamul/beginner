@@ -14,6 +14,7 @@ import org.namul.api.payload.handler.ExceptionAdviceHandler;
 @RequiredArgsConstructor
 public class ExceptionAdviceRegistry<E extends Exception, R extends ErrorReasonDTO> {
 
+    private final Class<E> cls;
     private final ExceptionAdviceHandler<E, R> handler;
     private final R errorReasonDTO;
 }
