@@ -98,16 +98,6 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
     }
 
     /**
-     * The method that add ErrorReasonDTO with default exception handler about specific Exception
-     * @param cls The exception class
-     * @param r The Reason will be written in response
-     * @param <E> The exception type
-     */
-    public <E extends Exception> void addAdvice(Class<E> cls, R r) {
-        this.adviceMap.put(cls, new ExceptionAdviceRegistry<>(new GlobalExceptionHandler<>(this.failureResponseWriter), r));
-    }
-
-    /**
      * The method that add ErrorReasonDTO and handler about specific Exception
      * @param cls The exception class
      * @param handler The handler which handle exception
@@ -115,7 +105,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param <E> The exception type
      */
     public <E extends Exception> void addAdvice(Class<E> cls, ExceptionAdviceHandler<E, R> handler, R r) {
-        this.adviceMap.put(cls, new ExceptionAdviceRegistry<>(handler, r));
+        this.adviceMap.put(cls, new ExceptionAdviceRegistry<>(cls, handler, r));
     }
 
     /**
