@@ -5,6 +5,12 @@ import org.namul.api.payload.error.ExceptionAdvice;
 import org.namul.api.payload.error.configurer.ExceptionAdviceConfigurer;
 import org.namul.api.payload.log.DefaultExceptionAdviceLogger;
 import org.namul.api.payload.log.ExceptionAdviceLogger;
+import org.namul.api.payload.message.DiscordExceptionAdviceMessage;
+import org.namul.api.payload.message.DiscordExceptionAdviceMessageSender;
+import org.namul.api.payload.message.ExceptionAdviceMessageManager;
+import org.namul.api.payload.message.ExceptionAdviceMessageSender;
+import org.namul.api.payload.message.generator.DefaultDiscordExceptionAdviceMessageGenerator;
+import org.namul.api.payload.message.generator.ExceptionAdviceMessageGenerator;
 import org.namul.api.payload.writer.FailureResponseWriter;
 import org.namul.api.payload.writer.supports.DefaultFailureResponseWriter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -12,7 +18,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
-@AutoConfiguration
+import java.util.Optional;
+
+@AutoConfiguration(
+        after = {DiscordSenderAutoConfiguration.class}
+)
 public class ExceptionAdviceAutoConfiguration {
 
     @Bean
@@ -29,7 +39,18 @@ public class ExceptionAdviceAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(ExceptionAdviceConfigurer.class)
-    <R extends ErrorReasonDTO> ExceptionAdvice<R> exceptionAdvice(ExceptionAdviceConfigurer<R> exceptionAdviceConfigurer, ExceptionAdviceLogger exceptionAdviceLogger) {
-        return new ExceptionAdvice<>(exceptionAdviceConfigurer, exceptionAdviceLogger);
+    <R extends ErrorReasonDTO> ExceptionAdvice<R> exceptionAdvice(ExceptionAdviceConfigurer<R> exceptionAdviceConfigurer,
+                                                                  ExceptionAdviceLogger exceptionAdviceLogger,
+                                                                  ExceptionAdviceMessageManager exceptionAdviceMessageManager) {
+        return new ExceptionAdvice<>(exceptionAdviceConfigurer, exceptionAdviceLogger, exceptionAdviceMessageManager);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(ExceptionAdviceMessageManager.class)
+    ExceptionAdviceMessageManager exceptionAdviceMessageManager(DiscordExceptionAdviceMessageSender discordExceptionAdviceMessageSender,
+                                                                Optional<ExceptionAdviceMessageGenerator<DiscordExceptionAdviceMessage>> discordGeneratorOptional) {
+        ExceptionAdviceMessageManager manager = new ExceptionAdviceMessageManager();
+        manager.addSender(discordExceptionAdviceMessageSender, discordGeneratorOptional.orElseGet(DefaultDiscordExceptionAdviceMessageGenerator::new));
+        return manager;
     }
 }

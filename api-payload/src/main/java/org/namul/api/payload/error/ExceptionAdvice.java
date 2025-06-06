@@ -8,6 +8,7 @@ import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.error.configurer.ExceptionAdviceConfigurer;
 import org.namul.api.payload.handler.ExceptionAdviceHandler;
 import org.namul.api.payload.log.ExceptionAdviceLogger;
+import org.namul.api.payload.message.ExceptionAdviceMessageManager;
 import org.namul.api.payload.response.BaseResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,6 +23,7 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
 
     private final ExceptionAdviceConfigurer<R> exceptionAdviceConfigurer;
     private final ExceptionAdviceLogger exceptionAdviceLogger;
+    private final ExceptionAdviceMessageManager exceptionAdviceMessageManager;
 
     /**
      * Handle method when exception occurs
@@ -34,6 +36,8 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
         if (registry == null) {
             throw new IllegalArgumentException("The appropriate handler was not found.");
         }
+
+        exceptionAdviceMessageManager.sendMessage(request, registry.getCls(), e);
         return handleDelegated(e, request, response, registry);
     }
 
