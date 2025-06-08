@@ -7,6 +7,7 @@ import org.namul.api.payload.message.generator.ExceptionAdviceMessageGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * The message manager that manage sending message to another platform. Send message to other platforms by using sender and message generator
@@ -15,6 +16,14 @@ import java.util.List;
 public class ExceptionAdviceMessageManager {
 
     private final List<ExceptionAdviceMessageSenderRegistry<?>> senders = new ArrayList<>();
+    private final Executor executor = new ThreadPoolExecutor(
+            10,
+            100,
+            60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(1000),
+            Executors.defaultThreadFactory(),
+            new ThreadPoolExecutor.CallerRunsPolicy()
+    );
 
     /**
      * Add message sender and generator
@@ -24,6 +33,16 @@ public class ExceptionAdviceMessageManager {
      */
     public final <T extends ExceptionAdviceMessage> void addSender(ExceptionAdviceMessageSender<T> sender, ExceptionAdviceMessageGenerator<T> generator) {
         senders.add(new ExceptionAdviceMessageSenderRegistry<>(sender, generator));
+    }
+
+    /**
+     * The method of asynchronous processing of message transfer
+     * @param request The HttpServletRequest to generate message.
+     * @param cls The class that register in properties as scope
+     * @param e The exception class that occurs actually
+     */
+    public void sendMessageAsync(HttpServletRequest request, Class<? extends Exception> cls, Exception e) {
+        CompletableFuture.runAsync(() -> sendMessage(request, cls, e), executor);
     }
 
     /**
