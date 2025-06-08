@@ -37,7 +37,7 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
             throw new IllegalArgumentException("The appropriate handler was not found.");
         }
 
-        exceptionAdviceMessageManager.sendMessage(request, registry.getCls(), e);
+        exceptionAdviceMessageManager.sendMessageAsync(request, registry.getCls(), e);
         return handleDelegated(e, request, response, registry);
     }
 
