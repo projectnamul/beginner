@@ -7,6 +7,9 @@ import org.namul.api.payload.message.format.SlackBlock;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Slack WebHook API message format
+ */
 @Getter
 @Builder
 public class SlackExceptionAdviceMessage implements ExceptionAdviceMessage {

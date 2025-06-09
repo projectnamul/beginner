@@ -3,6 +3,9 @@ package org.namul.api.payload.message;
 import lombok.RequiredArgsConstructor;
 import org.namul.api.payload.properties.SlackExceptionAdviceProperties;
 
+/**
+ * The message sender that send message to slack with properties and slackUtil
+ */
 @RequiredArgsConstructor
 public class SlackExceptionAdviceMessageSender implements ExceptionAdviceMessageSender<SlackExceptionAdviceMessage> {
 
