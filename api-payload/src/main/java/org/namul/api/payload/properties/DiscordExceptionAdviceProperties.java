@@ -1,6 +1,5 @@
 package org.namul.api.payload.properties;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,7 +10,7 @@ import java.util.List;
 @Setter
 @Getter
 @ConfigurationProperties(prefix = "beginner.api.payload.discord")
-public class DiscordProperties {
+public class DiscordExceptionAdviceProperties {
 
     /**
      * Whether to enable sending message to discord
