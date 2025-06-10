@@ -1,6 +1,5 @@
 package org.namul.api.payload.properties;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -10,11 +9,11 @@ import java.util.List;
 
 @Setter
 @Getter
-@ConfigurationProperties(prefix = "beginner.api.payload.discord")
-public class DiscordProperties {
+@ConfigurationProperties(prefix = "beginner.api.payload.slack")
+public class SlackExceptionAdviceProperties {
 
     /**
-     * Whether to enable sending message to discord
+     * Whether to enable sending message to slack
      */
     private boolean enable = false;
 
@@ -24,8 +23,7 @@ public class DiscordProperties {
     private List<String> scope = new ArrayList<>();
 
     /**
-     * The discord web hook url to send message
+     * The slack incoming web hook url to send message
      */
     private String webHookUrl = null;
-
 }

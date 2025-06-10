@@ -59,7 +59,7 @@ public class DefaultDiscordExceptionAdviceMessageGenerator implements ExceptionA
         StackTraceElement[] stackTraces = e.getStackTrace();
         if (stackTraces.length > 0) {
             StackTraceElement stackTrace = stackTraces[0];
-            return "Method: " + stackTrace.getMethodName() + "\n Class: " + stackTrace.getClassName();
+            return "Method: " + stackTrace.getMethodName() + "\nClass: " + stackTrace.getClassName();
         }
         return null;
     }
