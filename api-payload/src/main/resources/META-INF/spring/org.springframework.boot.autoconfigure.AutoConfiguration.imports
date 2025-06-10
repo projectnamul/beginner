@@ -1,4 +1,6 @@
 org.namul.api.payload.config.DefaultResponseAutoConfiguration
 org.namul.api.payload.config.ExceptionAdviceAutoConfiguration
 org.namul.api.payload.config.DiscordSenderAutoConfiguration
+org.namul.api.payload.config.SlackSenderAutoConfiguration
 org.namul.api.payload.properties.config.DiscordAutoConfiguration
+org.namul.api.payload.properties.config.SlackAutoConfiguration

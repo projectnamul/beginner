@@ -1,7 +1,7 @@
 package org.namul.api.payload.message;
 
 import lombok.RequiredArgsConstructor;
-import org.namul.api.payload.properties.DiscordProperties;
+import org.namul.api.payload.properties.DiscordExceptionAdviceProperties;
 
 /**
  * The message sender that send message to discord with properties and discordUtil
@@ -10,15 +10,15 @@ import org.namul.api.payload.properties.DiscordProperties;
 public class DiscordExceptionAdviceMessageSender implements ExceptionAdviceMessageSender<DiscordExceptionAdviceMessage> {
 
     private final DiscordExceptionAdviceUtil discordUtil;
-    private final DiscordProperties discordProperties;
+    private final DiscordExceptionAdviceProperties discordExceptionAdviceProperties;
 
     @Override
     public void sendMessage(DiscordExceptionAdviceMessage discordExceptionAdviceMessage) {
-        discordUtil.sendAlarm(discordProperties.getWebHookUrl(), discordExceptionAdviceMessage);
+        discordUtil.sendAlarm(discordExceptionAdviceProperties.getWebHookUrl(), discordExceptionAdviceMessage);
     }
 
     @Override
     public <E extends Exception> boolean isEnable(Class<E> cls) {
-        return discordProperties.isEnable() && discordProperties.getScope().contains(cls.getSimpleName());
+        return discordExceptionAdviceProperties.isEnable() && discordExceptionAdviceProperties.getScope().contains(cls.getSimpleName());
     }
 }
