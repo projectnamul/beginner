@@ -9,7 +9,6 @@ Because DefaultResponseWriteUtil and DefaultResponseWriter is already registered
 
 ```java
 @Configuration
-@RequiredArgsConstructor
 public class ExceptionAdviceConfig {
 
     @Bean
@@ -33,6 +32,20 @@ public class TestController {
     @GetMapping("/success")
     public DefaultResponse<String> success() {
         return responseWriter.ok("success"); // you can use DTO class instead of "success"
+    }
+}
+```
+or
+
+```java
+import org.namul.api.payload.response.DefaultResponse;
+
+@RestController
+public class TestController {
+
+    @GetMapping("/success")
+    public DefaultResponse<String> success() {
+        return DefaultResponse.ok("success"); // you can use DTO class instead of "success"
     }
 }
 ```
@@ -68,3 +81,25 @@ public class ExceptionAdviceConfig {
 
 }
 ```
+
+## ExceptionAdvice Message sender
+You can configure message sender with properties and generator. If you don't implement Generator, it will be default.
+```YAML
+beginner:
+  api:
+    payload:
+      discord:
+        scope:
+          - Exception
+          - ServerApplicationException
+        web-hook-url: ${DISCORD_WEBHOOK_URL}
+        enable: false
+      slack:
+        enable: true
+        scope:
+          - ServerApplicationException
+        web-hook-url: ${SLACK_WEBHOOK_URL}
+
+```
+
+If you add enable, scope, url, you can set it as you want. The reason for setting it as YML is to allow you to change scope, url, and enable without code modification.
