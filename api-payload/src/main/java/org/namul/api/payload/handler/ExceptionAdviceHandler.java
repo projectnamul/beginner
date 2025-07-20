@@ -20,11 +20,13 @@ public interface ExceptionAdviceHandler<E extends Exception, R extends ErrorReas
 
     /**
      * The method for logging message
-     * @param e The exception is occurred
+     *
+     * @param request
+     * @param e              The exception is occurred
      * @param errorReasonDTO The data about exception
      * @return The error message for logging, it can be String, Map, etc.
      */
-    default Object getMessage(E e, R errorReasonDTO) {
+    default Object getMessage(HttpServletRequest request, E e, R errorReasonDTO) {
         return e.getMessage();
     }
 }
