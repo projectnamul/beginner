@@ -8,11 +8,6 @@ public class DefaultExceptionAdviceConfigurer extends ExceptionAdviceConfigurer<
 
     public DefaultExceptionAdviceConfigurer(FailureResponseWriter<DefaultResponseErrorReasonDTO> failureResponseWriter) {
         super(failureResponseWriter);
-        super.withDefault(
-                DefaultResponseErrorCode._BAD_REQUEST.getReason(),
-                DefaultResponseErrorCode._BAD_REQUEST.getReason(),
-                DefaultResponseErrorCode._BAD_REQUEST.getReason(),
-                DefaultResponseErrorCode._INTERNAL_SERVER_ERROR.getReason()
-        );
+        super.withDefault(DefaultResponseErrorCode._BAD_REQUEST.getReason(), DefaultResponseErrorCode._INTERNAL_SERVER_ERROR.getReason());
     }
 }
