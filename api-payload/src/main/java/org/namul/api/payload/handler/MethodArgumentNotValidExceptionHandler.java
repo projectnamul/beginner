@@ -12,19 +12,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@RequiredArgsConstructor
-public class MethodArgumentNotValidExceptionHandler<R extends ErrorReasonDTO> implements ExceptionAdviceHandler<MethodArgumentNotValidException, R> {
+public class MethodArgumentNotValidExceptionHandler<R extends ErrorReasonDTO> extends AbstractExceptionAdviceHandler<MethodArgumentNotValidException, R> {
 
-    private final FailureResponseWriter<R> failureResponseWriter;
-
-    @Override
-    public BaseResponse handleException(MethodArgumentNotValidException e, HttpServletRequest request, HttpServletResponse response, R errorReasonDTO) {
-        Object message = getMessage(e, errorReasonDTO);
-        return failureResponseWriter.onFailure(errorReasonDTO, message);
+    public MethodArgumentNotValidExceptionHandler(FailureResponseWriter<R> failureResponseWriter) {
+        super(failureResponseWriter);
     }
 
     @Override
-    public Object getMessage(MethodArgumentNotValidException e, R errorReasonDTO) {
+    public Object getMessage(HttpServletRequest request, MethodArgumentNotValidException e, R errorReasonDTO) {
         Map<String, String> errors = new LinkedHashMap<>();
 
         e.getBindingResult().getFieldErrors()

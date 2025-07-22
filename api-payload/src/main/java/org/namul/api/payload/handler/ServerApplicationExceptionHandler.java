@@ -26,7 +26,7 @@ public class ServerApplicationExceptionHandler<R extends ErrorReasonDTO> impleme
     }
 
     @Override
-    public Object getMessage(ServerApplicationException e, R errorReasonDTO) {
+    public Object getMessage(HttpServletRequest request, ServerApplicationException e, R errorReasonDTO) {
         return e.getCode();
     }
 }
