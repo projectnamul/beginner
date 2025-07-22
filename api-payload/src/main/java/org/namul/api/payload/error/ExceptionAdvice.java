@@ -55,7 +55,7 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
         ExceptionAdviceHandler<E, R> handler = registry.getHandler();
 
         response.setStatus(reasonDTO.getHttpStatus().value());
-        exceptionAdviceLogger.log(e, reasonDTO, handler.getMessage(e, reasonDTO));
+        exceptionAdviceLogger.log(e, reasonDTO, handler.getMessage(request, e, reasonDTO));
 
         return handler.handleException(e, request, response, reasonDTO);
     }
