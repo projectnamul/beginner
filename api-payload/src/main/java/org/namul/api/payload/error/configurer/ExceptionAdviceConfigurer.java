@@ -106,7 +106,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle NoResourceFoundException
      * @param r The Reason will be written in response
      */
-    public void addNoResourceFoundExceptionHandler(ExceptionAdviceHandler<NoResourceFoundException, R> handler, R r) {
+    public void addNoResourceFound(ExceptionAdviceHandler<NoResourceFoundException, R> handler, R r) {
         this.addAdvice(NoResourceFoundException.class, handler, r);
     }
 
@@ -115,7 +115,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle TypeMismatchException
      * @param r The Reason will be written in response
      */
-    public void addTypeMismatchExceptionHandler(ExceptionAdviceHandler<TypeMismatchException, R> handler, R r) {
+    public void addTypeMismatch(ExceptionAdviceHandler<TypeMismatchException, R> handler, R r) {
         this.addAdvice(TypeMismatchException.class, handler, r);
     }
 
