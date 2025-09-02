@@ -1,6 +1,7 @@
 package org.namul.api.payload.writer.supports;
 
 import lombok.RequiredArgsConstructor;
+import org.namul.api.payload.code.dto.SuccessReasonDTO;
 import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO;
 import org.namul.api.payload.code.DefaultResponseSuccessCode;
 import org.namul.api.payload.response.DefaultResponse;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class DefaultSuccessResponseWriter implements SuccessResponseWriter<DefaultResponseSuccessReasonDTO> {
+public class DefaultSuccessResponseWriter implements SuccessResponseWriter {
 
     @Override
     public <T> DefaultResponse<T> ok(T result) {
@@ -25,12 +26,13 @@ public class DefaultSuccessResponseWriter implements SuccessResponseWriter<Defau
     }
 
     @Override
-    public <T> DefaultResponse<T> noContent() {
+    public DefaultResponse<Void> noContent() {
         return this.onSuccess(DefaultResponseSuccessCode._DELETED.getReason(), null);
     }
 
     @Override
-    public <T> DefaultResponse<T> onSuccess(DefaultResponseSuccessReasonDTO code, T result) {
-        return new DefaultResponse<>(code.isSuccess(), code.getCode(), code.getMessage(), result);
+    public <T> DefaultResponse<T> onSuccess(SuccessReasonDTO success, T result) {
+        DefaultResponseSuccessReasonDTO dto = (DefaultResponseSuccessReasonDTO) success;
+        return new DefaultResponse<>(dto.isSuccess(), dto.getCode(), dto.getMessage(), result);
     }
 }

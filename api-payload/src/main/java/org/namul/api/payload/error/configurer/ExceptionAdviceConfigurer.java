@@ -20,21 +20,20 @@ import java.util.Map;
 
 /**
  * The class how ExceptionAdvice handles exception
- * @param <R> This is ErrorReasonDTO that is data to create unified response
  */
 @RequiredArgsConstructor
-public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
+public class ExceptionAdviceConfigurer {
 
-    private final Map<Class<? extends Exception>, ExceptionAdviceRegistry<? extends Exception,? extends ErrorReasonDTO>> adviceMap = new HashMap<>();
-    private final FailureResponseWriter<R> failureResponseWriter;
+    private final Map<Class<? extends Exception>, ExceptionAdviceRegistry<? extends Exception>> adviceMap = new HashMap<>();
+    private final FailureResponseWriter failureResponseWriter;
 
     /**
      * The method for Default configuration
      * @param badRequestError The error reason DTO for bad request
      * @param internalServerError The error reason DTO for internal server error
      */
-    public void withDefault(R badRequestError,
-                            R internalServerError) {
+    public void withDefault(ErrorReasonDTO badRequestError,
+                            ErrorReasonDTO internalServerError) {
         this.addConstraintViolation(badRequestError);
         this.addMethodArgumentNotValid(badRequestError);
         this.addHttpMessageNotReadable(internalServerError);
@@ -52,7 +51,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle ConstraintViolationException
      * @param r The Reason will be written in response
      */
-    public void addConstraintViolation(ExceptionAdviceHandler<ConstraintViolationException, R> handler, R r) {
+    public void addConstraintViolation(ExceptionAdviceHandler<ConstraintViolationException> handler, ErrorReasonDTO r) {
         this.addAdvice(ConstraintViolationException.class, handler, r);
     }
 
@@ -61,7 +60,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle MethodArgumentNotValidException
      * @param r The Reason will be written in response
      */
-    public void addMethodArgumentNotValid(ExceptionAdviceHandler<MethodArgumentNotValidException, R> handler, R r) {
+    public void addMethodArgumentNotValid(ExceptionAdviceHandler<MethodArgumentNotValidException> handler, ErrorReasonDTO r) {
         this.addAdvice(MethodArgumentNotValidException.class, handler, r);
     }
 
@@ -70,7 +69,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle HttpMessageNotReadableException
      * @param r The Reason will be written in response
      */
-    public void addHttpMessageNotReadable(ExceptionAdviceHandler<HttpMessageNotReadableException, R> handler, R r) {
+    public void addHttpMessageNotReadable(ExceptionAdviceHandler<HttpMessageNotReadableException> handler, ErrorReasonDTO r) {
         this.addAdvice(HttpMessageNotReadableException.class, handler, r);
     }
 
@@ -79,7 +78,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle HttpRequestMethodNotSupportedException
      * @param r The Reason will be written in response
      */
-    public void addHttpRequestMethodNotSupported(ExceptionAdviceHandler<HttpRequestMethodNotSupportedException, R> handler, R r) {
+    public void addHttpRequestMethodNotSupported(ExceptionAdviceHandler<HttpRequestMethodNotSupportedException> handler, ErrorReasonDTO r) {
         this.addAdvice(HttpRequestMethodNotSupportedException.class, handler, r);
     }
 
@@ -88,7 +87,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle MissingPathVariableException
      * @param r The Reason will be written in response
      */
-    public void addMissingPathVariable(ExceptionAdviceHandler<MissingPathVariableException, R> handler, R r) {
+    public void addMissingPathVariable(ExceptionAdviceHandler<MissingPathVariableException> handler, ErrorReasonDTO r) {
         this.addAdvice(MissingPathVariableException.class, handler, r);
     }
 
@@ -97,7 +96,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle MissingServletRequestParameterException
      * @param r The Reason will be written in response
      */
-    public void addMissingServletRequestParameter(ExceptionAdviceHandler<MissingServletRequestParameterException, R> handler, R r) {
+    public void addMissingServletRequestParameter(ExceptionAdviceHandler<MissingServletRequestParameterException> handler, ErrorReasonDTO r) {
         this.addAdvice(MissingServletRequestParameterException.class, handler, r);
     }
 
@@ -106,7 +105,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle NoResourceFoundException
      * @param r The Reason will be written in response
      */
-    public void addNoResourceFound(ExceptionAdviceHandler<NoResourceFoundException, R> handler, R r) {
+    public void addNoResourceFound(ExceptionAdviceHandler<NoResourceFoundException> handler, ErrorReasonDTO r) {
         this.addAdvice(NoResourceFoundException.class, handler, r);
     }
 
@@ -115,7 +114,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle TypeMismatchException
      * @param r The Reason will be written in response
      */
-    public void addTypeMismatch(ExceptionAdviceHandler<TypeMismatchException, R> handler, R r) {
+    public void addTypeMismatch(ExceptionAdviceHandler<TypeMismatchException> handler, ErrorReasonDTO r) {
         this.addAdvice(TypeMismatchException.class, handler, r);
     }
 
@@ -124,7 +123,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle ServerApplicationException
      * @param r The Reason will be written in response
      */
-    public void addServerApplication(ExceptionAdviceHandler<ServerApplicationException, R> handler, R r) {
+    public void addServerApplication(ExceptionAdviceHandler<ServerApplicationException> handler, ErrorReasonDTO r) {
         this.addAdvice(ServerApplicationException.class, handler, r);
     }
 
@@ -133,7 +132,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param handler The handler which handle Exception
      * @param r The Reason will be written in response
      */
-    public void addGlobalException(ExceptionAdviceHandler<Exception, R> handler, R r) {
+    public void addGlobalException(ExceptionAdviceHandler<Exception> handler, ErrorReasonDTO r) {
         this.addAdvice(Exception.class, handler, r);
     }
 
@@ -141,80 +140,80 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * The method that add ErrorReasonDTO with default handler about ConstraintViolationException
      * @param r The Reason will be written in response
      */
-    public void addConstraintViolation(R r) {
-        this.addAdvice(ConstraintViolationException.class, new ConstraintViolationExceptionHandler<>(this.failureResponseWriter), r);
+    public void addConstraintViolation(ErrorReasonDTO r) {
+        this.addAdvice(ConstraintViolationException.class, new ConstraintViolationExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about MethodArgumentNotValidException
      * @param r The Reason will be written in response
      */
-    public void addMethodArgumentNotValid(R r) {
-        this.addAdvice(MethodArgumentNotValidException.class, new MethodArgumentNotValidExceptionHandler<>(this.failureResponseWriter), r);
+    public void addMethodArgumentNotValid(ErrorReasonDTO r) {
+        this.addAdvice(MethodArgumentNotValidException.class, new MethodArgumentNotValidExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about HttpMessageNotReadableException
      * @param r The Reason will be written in response
      */
-    public void addHttpMessageNotReadable(R r) {
-        this.addAdvice(HttpMessageNotReadableException.class, new HttpMessageNotReadableExceptionHandler<>(this.failureResponseWriter), r);
+    public void addHttpMessageNotReadable(ErrorReasonDTO r) {
+        this.addAdvice(HttpMessageNotReadableException.class, new HttpMessageNotReadableExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about HttpRequestMethodNotSupported
      * @param r The Reason will be written in response
      */
-    public void addHttpRequestMethodNotSupported(R r) {
-        this.addAdvice(HttpRequestMethodNotSupportedException.class, new HttpRequestMethodNotSupportedExceptionHandler<>(this.failureResponseWriter), r);
+    public void addHttpRequestMethodNotSupported(ErrorReasonDTO r) {
+        this.addAdvice(HttpRequestMethodNotSupportedException.class, new HttpRequestMethodNotSupportedExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about MissingPathVariableException
      * @param r The Reason will be written in response
      */
-    public void addMissingPathVariable(R r) {
-        this.addAdvice(MissingPathVariableException.class, new MissingPathVariableExceptionHandler<>(this.failureResponseWriter), r);
+    public void addMissingPathVariable(ErrorReasonDTO r) {
+        this.addAdvice(MissingPathVariableException.class, new MissingPathVariableExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about MissingServletRequestParameterException
      * @param r The Reason will be written in response
      */
-    public void addMissingServletRequestParameter(R r) {
-        this.addAdvice(MissingServletRequestParameterException.class, new MissingServletRequestParameterExceptionHandler<>(this.failureResponseWriter), r);
+    public void addMissingServletRequestParameter(ErrorReasonDTO r) {
+        this.addAdvice(MissingServletRequestParameterException.class, new MissingServletRequestParameterExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about NoResourceFoundException
      * @param r The Reason will be written in response
      */
-    public void addNoResourceFound(R r) {
-        this.addAdvice(NoResourceFoundException.class, new NoResourceFoundExceptionHandler<>(this.failureResponseWriter), r);
+    public void addNoResourceFound(ErrorReasonDTO r) {
+        this.addAdvice(NoResourceFoundException.class, new NoResourceFoundExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about TypeMismatchException
      * @param r The Reason will be written in response
      */
-    public void addTypeMismatch(R r) {
-        this.addAdvice(TypeMismatchException.class, new TypeMismatchExceptionHandler<>(this.failureResponseWriter), r);
+    public void addTypeMismatch(ErrorReasonDTO r) {
+        this.addAdvice(TypeMismatchException.class, new TypeMismatchExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about ServerApplicationException
      * @param r The Reason will be written in response
      */
-    public void addServerApplication(R r) {
-        this.addAdvice(ServerApplicationException.class, new ServerApplicationExceptionHandler<>(this.failureResponseWriter), r);
+    public void addServerApplication(ErrorReasonDTO r) {
+        this.addAdvice(ServerApplicationException.class, new ServerApplicationExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about Exception
      * @param r The Reason will be written in response
      */
-    public void addGlobalException(R r) {
-        this.addAdvice(Exception.class, new GlobalExceptionHandler<>(this.failureResponseWriter), r);
+    public void addGlobalException(ErrorReasonDTO r) {
+        this.addAdvice(Exception.class, new GlobalExceptionHandler(this.failureResponseWriter), r);
     }
 
     /**
@@ -224,7 +223,7 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param r The Reason will be written in response
      * @param <E> The exception type
      */
-    public <E extends Exception> void addAdvice(Class<E> cls, ExceptionAdviceHandler<E, R> handler, R r) {
+    public <E extends Exception> void addAdvice(Class<E> cls, ExceptionAdviceHandler<E> handler, ErrorReasonDTO r) {
         this.adviceMap.put(cls, new ExceptionAdviceRegistry<>(cls, handler, r));
     }
 
@@ -245,12 +244,12 @@ public class ExceptionAdviceConfigurer<R extends ErrorReasonDTO> {
      * @param <E> The exception type
      */
     @SuppressWarnings("unchecked")
-    public <E extends Exception> ExceptionAdviceRegistry<E, R> findRegistry(Class<? extends Exception> exceptionClass) {
+    public <E extends Exception> ExceptionAdviceRegistry<E> findRegistry(Class<? extends Exception> exceptionClass) {
         Class<?> current = exceptionClass;
         while (current != null && Exception.class.isAssignableFrom(current)) {
-            ExceptionAdviceRegistry<?, ?> registry = this.adviceMap.get(current);
+            ExceptionAdviceRegistry<?> registry = this.adviceMap.get(current);
             if (registry != null) {
-                return (ExceptionAdviceRegistry<E, R>) registry;
+                return (ExceptionAdviceRegistry<E>) registry;
             }
             current = current.getSuperclass();
         }

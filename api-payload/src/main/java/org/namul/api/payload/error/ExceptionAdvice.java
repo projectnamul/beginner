@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class ExceptionAdvice<R extends ErrorReasonDTO> {
+public class ExceptionAdvice {
 
-    private final ExceptionAdviceConfigurer<R> exceptionAdviceConfigurer;
+    private final ExceptionAdviceConfigurer exceptionAdviceConfigurer;
     private final ExceptionAdviceLogger exceptionAdviceLogger;
     private final ExceptionAdviceMessageManager exceptionAdviceMessageManager;
 
@@ -32,7 +32,7 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
      */
     @ExceptionHandler
     public <E extends Exception> BaseResponse handle(E e, HttpServletRequest request, HttpServletResponse response) {
-        ExceptionAdviceRegistry<E, R> registry = this.exceptionAdviceConfigurer.findRegistry(e.getClass());
+        ExceptionAdviceRegistry<E> registry = this.exceptionAdviceConfigurer.findRegistry(e.getClass());
         if (registry == null) {
             throw new IllegalArgumentException("The appropriate handler was not found.");
         }
@@ -50,9 +50,9 @@ public class ExceptionAdvice<R extends ErrorReasonDTO> {
      * @return The created response
      * @param <E> The exception type
      */
-    private <E extends Exception> BaseResponse handleDelegated(E e, HttpServletRequest request, HttpServletResponse response, ExceptionAdviceRegistry<E, R> registry) {
-        R reasonDTO = registry.getErrorReasonDTO();
-        ExceptionAdviceHandler<E, R> handler = registry.getHandler();
+    private <E extends Exception> BaseResponse handleDelegated(E e, HttpServletRequest request, HttpServletResponse response, ExceptionAdviceRegistry<E> registry) {
+        ErrorReasonDTO reasonDTO = registry.getErrorReasonDTO();
+        ExceptionAdviceHandler<E> handler = registry.getHandler();
 
         response.setStatus(reasonDTO.getHttpStatus().value());
         exceptionAdviceLogger.log(e, reasonDTO, handler.getMessage(request, e, reasonDTO));

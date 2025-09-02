@@ -10,7 +10,6 @@ public interface ExceptionAdviceLogger {
      * @param r The ErrorReasonDTO
      * @param message The message for logging
      * @param <E> The exception type
-     * @param <R> the ErrorReasonDTO type
      */
-    <E extends Exception, R extends ErrorReasonDTO> void log(E e, R r, Object message);
+    <E extends Exception> void log(E e, ErrorReasonDTO r, Object message);
 }

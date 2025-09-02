@@ -7,7 +7,7 @@ import org.namul.api.payload.code.dto.ErrorReasonDTO;
 public class DefaultExceptionAdviceLogger implements ExceptionAdviceLogger {
 
     @Override
-    public <E extends Exception, R extends ErrorReasonDTO> void log(E e, R r, Object message) {
+    public <E extends Exception> void log(E e, ErrorReasonDTO r, Object message) {
         log.warn("Exception Advice({}): {}", e.getClass().getSimpleName(), message, e);
     }
 }

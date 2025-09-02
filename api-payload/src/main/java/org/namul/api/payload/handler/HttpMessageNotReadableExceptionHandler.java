@@ -1,12 +1,11 @@
 package org.namul.api.payload.handler;
 
-import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.writer.FailureResponseWriter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
-public class HttpMessageNotReadableExceptionHandler<R extends ErrorReasonDTO> extends AbstractExceptionAdviceHandler<HttpMessageNotReadableException, R> {
+public class HttpMessageNotReadableExceptionHandler extends AbstractExceptionAdviceHandler<HttpMessageNotReadableException> {
 
-    public HttpMessageNotReadableExceptionHandler(FailureResponseWriter<R> failureResponseWriter) {
+    public HttpMessageNotReadableExceptionHandler(FailureResponseWriter failureResponseWriter) {
         super(failureResponseWriter);
     }
 }

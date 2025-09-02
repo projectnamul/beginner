@@ -1,6 +1,5 @@
 package org.namul.api.payload.config;
 
-import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.error.ExceptionAdvice;
 import org.namul.api.payload.error.configurer.ExceptionAdviceConfigurer;
 import org.namul.api.payload.log.DefaultExceptionAdviceLogger;
@@ -37,10 +36,10 @@ public class ExceptionAdviceAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(ExceptionAdviceConfigurer.class)
-    <R extends ErrorReasonDTO> ExceptionAdvice<R> exceptionAdvice(ExceptionAdviceConfigurer<R> exceptionAdviceConfigurer,
+    ExceptionAdvice exceptionAdvice(ExceptionAdviceConfigurer exceptionAdviceConfigurer,
                                                                   ExceptionAdviceLogger exceptionAdviceLogger,
                                                                   ExceptionAdviceMessageManager exceptionAdviceMessageManager) {
-        return new ExceptionAdvice<>(exceptionAdviceConfigurer, exceptionAdviceLogger, exceptionAdviceMessageManager);
+        return new ExceptionAdvice(exceptionAdviceConfigurer, exceptionAdviceLogger, exceptionAdviceMessageManager);
     }
 
     @Bean

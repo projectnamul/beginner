@@ -1,12 +1,11 @@
 package org.namul.api.payload.error.configurer;
 
 import org.namul.api.payload.code.DefaultResponseErrorCode;
-import org.namul.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO;
 import org.namul.api.payload.writer.FailureResponseWriter;
 
-public class DefaultExceptionAdviceConfigurer extends ExceptionAdviceConfigurer<DefaultResponseErrorReasonDTO> {
+public class DefaultExceptionAdviceConfigurer extends ExceptionAdviceConfigurer {
 
-    public DefaultExceptionAdviceConfigurer(FailureResponseWriter<DefaultResponseErrorReasonDTO> failureResponseWriter) {
+    public DefaultExceptionAdviceConfigurer(FailureResponseWriter failureResponseWriter) {
         super(failureResponseWriter);
         super.addConstraintViolation(DefaultResponseErrorCode._CONSTRAINT_VIOLATION.getReason());
         super.addMethodArgumentNotValid(DefaultResponseErrorCode._METHOD_ARGUMENT_NOT_VALID.getReason());
