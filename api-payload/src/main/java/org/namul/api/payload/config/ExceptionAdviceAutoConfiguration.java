@@ -1,7 +1,5 @@
 package org.namul.api.payload.config;
 
-import org.namul.api.payload.error.ExceptionAdvice;
-import org.namul.api.payload.error.configurer.ExceptionAdviceConfigurer;
 import org.namul.api.payload.log.DefaultExceptionAdviceLogger;
 import org.namul.api.payload.log.ExceptionAdviceLogger;
 import org.namul.api.payload.message.*;
@@ -11,7 +9,6 @@ import org.namul.api.payload.message.generator.ExceptionAdviceMessageGenerator;
 import org.namul.api.payload.writer.FailureResponseWriter;
 import org.namul.api.payload.writer.supports.DefaultFailureResponseWriter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
@@ -24,7 +21,7 @@ public class ExceptionAdviceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(FailureResponseWriter.class)
-    DefaultFailureResponseWriter defaultFailureResponseWriter() {
+    FailureResponseWriter defaultFailureResponseWriter() {
         return new DefaultFailureResponseWriter();
     }
 
@@ -32,14 +29,6 @@ public class ExceptionAdviceAutoConfiguration {
     @ConditionalOnMissingBean(ExceptionAdviceLogger.class)
     DefaultExceptionAdviceLogger defaultExceptionAdviceLogger() {
         return new DefaultExceptionAdviceLogger();
-    }
-
-    @Bean
-    @ConditionalOnBean(ExceptionAdviceConfigurer.class)
-    ExceptionAdvice exceptionAdvice(ExceptionAdviceConfigurer exceptionAdviceConfigurer,
-                                                                  ExceptionAdviceLogger exceptionAdviceLogger,
-                                                                  ExceptionAdviceMessageManager exceptionAdviceMessageManager) {
-        return new ExceptionAdvice(exceptionAdviceConfigurer, exceptionAdviceLogger, exceptionAdviceMessageManager);
     }
 
     @Bean

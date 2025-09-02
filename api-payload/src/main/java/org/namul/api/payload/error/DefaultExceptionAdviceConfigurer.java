@@ -1,4 +1,4 @@
-package org.namul.api.payload.error.configurer;
+package org.namul.api.payload.error;
 
 import org.namul.api.payload.code.DefaultResponseErrorCode;
 import org.namul.api.payload.writer.FailureResponseWriter;

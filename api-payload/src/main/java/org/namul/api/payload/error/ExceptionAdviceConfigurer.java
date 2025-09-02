@@ -1,9 +1,9 @@
-package org.namul.api.payload.error.configurer;
+package org.namul.api.payload.error;
 
 import jakarta.validation.ConstraintViolationException;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.namul.api.payload.code.dto.ErrorReasonDTO;
-import org.namul.api.payload.error.ExceptionAdviceRegistry;
 import org.namul.api.payload.error.exception.ServerApplicationException;
 import org.namul.api.payload.handler.*;
 import org.namul.api.payload.writer.FailureResponseWriter;
@@ -15,17 +15,18 @@ import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The class how ExceptionAdvice handles exception
  */
+@Getter
 @RequiredArgsConstructor
 public class ExceptionAdviceConfigurer {
 
     private final Map<Class<? extends Exception>, ExceptionAdviceRegistry<? extends Exception>> adviceMap = new HashMap<>();
     private final FailureResponseWriter failureResponseWriter;
+    private final List<AdditionalExceptionHandler> additionalExceptionHandlers = new ArrayList<>();
 
     /**
      * The method for Default configuration
@@ -36,7 +37,7 @@ public class ExceptionAdviceConfigurer {
                             ErrorReasonDTO internalServerError) {
         this.addConstraintViolation(badRequestError);
         this.addMethodArgumentNotValid(badRequestError);
-        this.addHttpMessageNotReadable(internalServerError);
+        this.addHttpMessageNotReadable(badRequestError);
         this.addHttpRequestMethodNotSupported(badRequestError);
         this.addMissingPathVariable(badRequestError);
         this.addMissingServletRequestParameter(badRequestError);
@@ -44,6 +45,22 @@ public class ExceptionAdviceConfigurer {
         this.addTypeMismatch(badRequestError);
         this.addServerApplication(badRequestError);
         this.addGlobalException(internalServerError);
+    }
+
+    /**
+     * Add AdditionalExceptionHandler in ExceptionAdvice
+     * @param additionalExceptionHandler The Handler for additional function
+     */
+    public void addAdditionalExceptionHandler(AdditionalExceptionHandler additionalExceptionHandler) {
+        this.additionalExceptionHandlers.add(additionalExceptionHandler);
+    }
+
+    /**
+     * Add AdditionalExceptionHandler in ExceptionAdvice
+     * @param additionalExceptionHandlers The Handlers for additional function
+     */
+    public void addAdditionalExceptionHandlers(List<AdditionalExceptionHandler> additionalExceptionHandlers) {
+        this.additionalExceptionHandlers.addAll(additionalExceptionHandlers);
     }
 
     /**
@@ -237,22 +254,11 @@ public class ExceptionAdviceConfigurer {
     }
 
     /**
-     * Find registry(handler, error reason) in map repository, First, find exception class in map. if handler about exception class is not found, find handler about super class.
-     * Last handler about Exception class is return. if handler about exception class didn't exist, it will return null
-     * @param exceptionClass The exception class occurs
-     * @return The exception registry contains handler and ErrorReasonDTO
-     * @param <E> The exception type
+     * Build Exception Advice with configuration settings
+     * @return The configured ExceptionAdvice
      */
-    @SuppressWarnings("unchecked")
-    public <E extends Exception> ExceptionAdviceRegistry<E> findRegistry(Class<? extends Exception> exceptionClass) {
-        Class<?> current = exceptionClass;
-        while (current != null && Exception.class.isAssignableFrom(current)) {
-            ExceptionAdviceRegistry<?> registry = this.adviceMap.get(current);
-            if (registry != null) {
-                return (ExceptionAdviceRegistry<E>) registry;
-            }
-            current = current.getSuperclass();
-        }
-        return null;
+    public ExceptionAdvice build() {
+        return new ExceptionAdvice(this);
     }
+
 }
