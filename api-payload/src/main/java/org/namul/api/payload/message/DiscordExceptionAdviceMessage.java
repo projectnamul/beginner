@@ -15,7 +15,7 @@ import java.util.List;
 public class DiscordExceptionAdviceMessage implements ExceptionAdviceMessage {
 
     private String content;
-    private List<DiscordEmbed> discordEmbeds;
+    private List<DiscordEmbed> embeds;
 
     public static DiscordExceptionAdviceMessage from(String content, String title1, String description1, String title2, String description2) {
         List<DiscordEmbed> discordEmbeds = new ArrayList<>();
@@ -27,7 +27,7 @@ public class DiscordExceptionAdviceMessage implements ExceptionAdviceMessage {
     public static DiscordExceptionAdviceMessage from(String content, List<DiscordEmbed> discordEmbeds) {
         return DiscordExceptionAdviceMessage.builder()
                 .content(content)
-                .discordEmbeds(discordEmbeds)
+                .embeds(discordEmbeds)
                 .build();
     }
 
