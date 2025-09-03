@@ -2,6 +2,7 @@ package org.namul.api.payload.message;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.namul.api.payload.message.format.DiscordEmbed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,34 +15,20 @@ import java.util.List;
 public class DiscordExceptionAdviceMessage implements ExceptionAdviceMessage {
 
     private String content;
-    private List<Embed> embeds;
+    private List<DiscordEmbed> discordEmbeds;
 
     public static DiscordExceptionAdviceMessage from(String content, String title1, String description1, String title2, String description2) {
-        List<Embed> embeds = new ArrayList<>();
-        embeds.add(Embed.from(title1, description1));
-        embeds.add(Embed.from(title2, description2));
-        return from(content, embeds);
+        List<DiscordEmbed> discordEmbeds = new ArrayList<>();
+        discordEmbeds.add(DiscordEmbed.from(title1, description1));
+        discordEmbeds.add(DiscordEmbed.from(title2, description2));
+        return from(content, discordEmbeds);
     }
 
-    public static DiscordExceptionAdviceMessage from(String content, List<Embed> embeds) {
+    public static DiscordExceptionAdviceMessage from(String content, List<DiscordEmbed> discordEmbeds) {
         return DiscordExceptionAdviceMessage.builder()
                 .content(content)
-                .embeds(embeds)
+                .discordEmbeds(discordEmbeds)
                 .build();
     }
 
-    @Builder
-    @Getter
-    public static class Embed {
-
-        private String title;
-        private String description;
-
-        public static Embed from(String title, String description) {
-            return Embed.builder()
-                    .title(title)
-                    .description(description)
-                    .build();
-        }
-    }
 }
