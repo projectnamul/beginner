@@ -8,12 +8,12 @@ import org.namul.api.payload.response.BaseResponse;
 import org.namul.api.payload.writer.FailureResponseWriter;
 
 @RequiredArgsConstructor
-public abstract class AbstractExceptionAdviceHandler<E extends Exception, R extends ErrorReasonDTO> implements ExceptionAdviceHandler<E, R> {
+public abstract class AbstractExceptionAdviceHandler<E extends Exception> implements ExceptionAdviceHandler<E> {
 
-    private final FailureResponseWriter<R> failureResponseWriter;
+    private final FailureResponseWriter failureResponseWriter;
 
     @Override
-    public BaseResponse handleException(E e, HttpServletRequest request, HttpServletResponse response, R errorReasonDTO) {
+    public BaseResponse handleException(E e, HttpServletRequest request, HttpServletResponse response, ErrorReasonDTO errorReasonDTO) {
         return failureResponseWriter.onFailure(errorReasonDTO, getMessage(request, e, errorReasonDTO));
     }
 }

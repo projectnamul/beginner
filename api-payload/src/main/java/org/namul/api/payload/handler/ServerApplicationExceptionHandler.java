@@ -9,24 +9,23 @@ import org.namul.api.payload.response.BaseResponse;
 import org.namul.api.payload.writer.FailureResponseWriter;
 
 @RequiredArgsConstructor
-public class ServerApplicationExceptionHandler<R extends ErrorReasonDTO> implements ExceptionAdviceHandler<ServerApplicationException, R> {
+public class ServerApplicationExceptionHandler implements ExceptionAdviceHandler<ServerApplicationException> {
 
-    private final FailureResponseWriter<R> failureResponseWriter;
+    private final FailureResponseWriter failureResponseWriter;
 
     @Override
     @SuppressWarnings("unchecked")
-    public BaseResponse handleException(ServerApplicationException e, HttpServletRequest request, HttpServletResponse response, R errorReasonDTO) {
+    public BaseResponse handleException(ServerApplicationException e, HttpServletRequest request, HttpServletResponse response, ErrorReasonDTO errorReasonDTO) {
 
-        try {
-            R errorReason = (R) e.getErrorReason();
-            return failureResponseWriter.onFailure(errorReason, null);
-        } catch (ClassCastException classCastException) {
+        if (e.getErrorReason() != null) {
+            return failureResponseWriter.onFailure(e.getErrorReason(), null);
+        } else {
             return failureResponseWriter.onFailure(errorReasonDTO, null);
         }
     }
 
     @Override
-    public Object getMessage(HttpServletRequest request, ServerApplicationException e, R errorReasonDTO) {
+    public Object getMessage(HttpServletRequest request, ServerApplicationException e, ErrorReasonDTO errorReasonDTO) {
         return e.getCode();
     }
 }

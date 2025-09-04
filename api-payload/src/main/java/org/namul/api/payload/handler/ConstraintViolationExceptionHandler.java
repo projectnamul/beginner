@@ -6,14 +6,14 @@ import jakarta.validation.ConstraintViolationException;
 import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.writer.FailureResponseWriter;
 
-public class ConstraintViolationExceptionHandler<R extends ErrorReasonDTO> extends AbstractExceptionAdviceHandler<ConstraintViolationException, R> {
+public class ConstraintViolationExceptionHandler extends AbstractExceptionAdviceHandler<ConstraintViolationException> {
 
-    public ConstraintViolationExceptionHandler(FailureResponseWriter<R> failureResponseWriter) {
+    public ConstraintViolationExceptionHandler(FailureResponseWriter failureResponseWriter) {
         super(failureResponseWriter);
     }
 
     @Override
-    public Object getMessage(HttpServletRequest request, ConstraintViolationException e, R errorReasonDTO) {
+    public Object getMessage(HttpServletRequest request, ConstraintViolationException e, ErrorReasonDTO errorReasonDTO) {
         return e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .findFirst()
