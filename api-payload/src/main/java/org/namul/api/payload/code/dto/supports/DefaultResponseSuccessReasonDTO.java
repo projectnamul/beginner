@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Builder
 public class DefaultResponseSuccessReasonDTO implements SuccessReasonDTO {
-    private HttpStatus httpStatus;
+    private final HttpStatus httpStatus;
 
     private final boolean isSuccess;
     private final String code;

@@ -1,11 +1,10 @@
 package org.namul.api.payload.handler;
 
-import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.writer.FailureResponseWriter;
 
-public class GlobalExceptionHandler<R extends ErrorReasonDTO> extends AbstractExceptionAdviceHandler<Exception, R> {
+public class GlobalExceptionHandler extends AbstractExceptionAdviceHandler<Exception> {
 
-    public GlobalExceptionHandler(FailureResponseWriter<R> failureResponseWriter) {
+    public GlobalExceptionHandler(FailureResponseWriter failureResponseWriter) {
         super(failureResponseWriter);
     }
 
