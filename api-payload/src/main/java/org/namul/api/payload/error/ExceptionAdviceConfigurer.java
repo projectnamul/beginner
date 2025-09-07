@@ -36,14 +36,26 @@ public class ExceptionAdviceConfigurer {
      */
     public ExceptionAdviceConfigurer withDefault(BaseErrorCode badRequestError,
                                                  BaseErrorCode internalServerError) {
-        return this.withDefault(badRequestError.getReason(), internalServerError.getReason());
+        return this
+                .addConstraintViolation(badRequestError)
+                .addMethodArgumentNotValid(badRequestError)
+                .addHttpMessageNotReadable(badRequestError)
+                .addHttpRequestMethodNotSupported(badRequestError)
+                .addMissingPathVariable(badRequestError)
+                .addMissingServletRequestParameter(badRequestError)
+                .addNoResourceFound(badRequestError)
+                .addTypeMismatch(badRequestError)
+                .addServerApplication(badRequestError)
+                .addGlobalException(internalServerError);
     }
 
     /**
      * The method for Default configuration
      * @param badRequestError The error reason DTO for bad request
      * @param internalServerError The error reason DTO for internal server error
+     * @deprecated since 0.7.1, will be removed in a future release, Use {@link #withDefault(BaseErrorCode, BaseErrorCode)} instead
      */
+    @Deprecated
     public ExceptionAdviceConfigurer withDefault(ErrorReasonDTO badRequestError,
                             ErrorReasonDTO internalServerError) {
         return this
