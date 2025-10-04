@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.namul</groupId>
         <artifactId>beginner</artifactId>
-        <version>0.7.1</version>
+        <version>0.7.2</version>
     </parent>
 
     <artifactId>api-payload</artifactId>
@@ -46,7 +46,6 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
