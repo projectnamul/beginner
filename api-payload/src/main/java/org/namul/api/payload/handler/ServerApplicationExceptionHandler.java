@@ -18,6 +18,7 @@ public class ServerApplicationExceptionHandler implements ExceptionAdviceHandler
     public BaseResponse handleException(ServerApplicationException e, HttpServletRequest request, HttpServletResponse response, ErrorReasonDTO errorReasonDTO) {
 
         if (e.getErrorReason() != null) {
+            response.setStatus(e.getErrorReason().getHttpStatus().value());
             return failureResponseWriter.onFailure(e.getErrorReason(), null);
         } else {
             return failureResponseWriter.onFailure(errorReasonDTO, null);
