@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.namul.api.payload.code.DefaultResponseSuccessCode;
 import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO;
 
@@ -12,15 +14,23 @@ import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO;
  * @param <T> The type of data which to be sent to client
  */
 @Getter
+@Setter
 @JsonPropertyOrder({"isSuccess", "code", "message", "result"})
 public class DefaultResponse<T> extends AbstractBaseResponse<T> {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private final String code;
+    private String code;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private final String message;
+    private String message;
     @JsonProperty("isSuccess")
-    private final Boolean isSuccess;
+    private Boolean isSuccess;
+
+    public DefaultResponse() {
+        super(null);
+        this.code = null;
+        this.message = null;
+        this.isSuccess = false;
+    }
 
     public DefaultResponse(Boolean isSuccess, String code, String message, T result) {
         super(result);
