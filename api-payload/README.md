@@ -12,8 +12,20 @@ Because DefaultResponseWriteUtil and DefaultResponseWriter is already registered
 public class ExceptionAdviceConfig {
 
     @Bean
-    ExceptionAdviceConfigurer<DefaultResponseErrorReasonDTO> defaultExceptionAdviceConfigurer(FailureResponseWriter<DefaultResponseErrorReasonDTO> failureResponseWriter) {
-        return new DefaultExceptionAdviceConfigurer(failureResponseWriter);
+    ExceptionAdvice defaultExceptionAdviceConfigurer(
+            FailureResponseWriter failureResponseWriter,
+            List<AdditionalExceptionHandler> additionalExceptionHandlers
+    ) {
+        return new DefaultExceptionAdviceConfigurer(failureResponseWriter)
+                .addAdditionalExceptionHandlers(additionalExceptionHandlers)
+//                .addAdditionalExceptionHandler(logAdditionalExceptionHandler())
+                .build();
+    }
+
+    // If you want to make log
+    @Bean
+    LogAdditionalExceptionHandler logAdditionalExceptionHandler() {
+        return new LogAdditionalExceptionHandler();
     }
 }
 ```
@@ -23,6 +35,8 @@ public class ExceptionAdviceConfig {
 You can use DefaultResponseWriter which is already registered in bean with DI
 
 ```java
+import org.namul.api.payload.response.DefaultResponse;
+
 @RestController
 @RequiredArgsConstructor
 public class TestController {
@@ -32,20 +46,8 @@ public class TestController {
     @GetMapping("/success")
     public DefaultResponse<String> success() {
         return responseWriter.ok("success"); // you can use DTO class instead of "success"
-    }
-}
-```
-or
-
-```java
-import org.namul.api.payload.response.DefaultResponse;
-
-@RestController
-public class TestController {
-
-    @GetMapping("/success")
-    public DefaultResponse<String> success() {
-        return DefaultResponse.ok("success"); // you can use DTO class instead of "success"
+        // or
+        // return DefaultResponse.ok("success");
     }
 }
 ```
@@ -62,24 +64,17 @@ You can make custom response by implementing BaseResponse, ErrorReasonDTO, Succe
 
 ### how to add custom handler in ExceptionAdvice
 ```java
-@Configuration
-@RequiredArgsConstructor
-public class ExceptionAdviceConfig {
-
-    private final CustomFailureResponseWriter customFailureResponseWriter;
-    private final CustomServerApplicationExceptionHandler customServerApplicationExceptionHandler;
-
     @Bean
-    ExceptionAdviceConfigurer<CustomErrorReasonDTO> exceptionAdviceConfigurer() {
-        ExceptionAdviceConfigurer<CustomErrorReasonDTO> configurer = new ExceptionAdviceConfigurer<>(customFailureResponseWriter); // Apply response writer when exception occurs
-        configurer.addConstraintViolation(CustomErrorCode.ERROR.getReason()); // apply with default handler
-        configurer.addMethodArgumentNotValid(CustomErrorCode.ERROR.getReason());
-        configurer.addServerApplication(customServerApplicationExceptionHandler, CustomErrorCode.ERROR.getReason()); // apply custom handler
-        configurer.addGlobalException(CustomErrorCode.BAD_ERROR.getReason());
-        return configurer;
+    ExceptionAdvice defaultExceptionAdviceConfigurer(
+                FailureResponseWriter failureResponseWriter, // Custom FailureResponseWriter
+                List<AdditionalExceptionHandler> additionalExceptionHandlers
+            ) {
+        return new ExceptionAdviceConfigurer(failureResponseWriter)
+            .withDefault(CustomErrorCode.ERROR, CustomErrorCode.BAD_ERROR) // register error code for 4xx, 5xx error
+            .addMissingPathVariable(CustomErrorCode.BAD_ERROR) // Register BaseErrorCode for MissingPathVariableException
+            .addAdditionalExceptionHandlers(additionalExceptionHandlers) // Register additional handler
+            .build();
     }
-
-}
 ```
 
 ## ExceptionAdvice Message sender
