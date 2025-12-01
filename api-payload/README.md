@@ -35,8 +35,6 @@ public class ExceptionAdviceConfig {
 You can use DefaultResponseWriter which is already registered in bean with DI
 
 ```java
-import org.namul.api.payload.response.DefaultResponse;
-
 @RestController
 @RequiredArgsConstructor
 public class TestController {
