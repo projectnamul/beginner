@@ -49,9 +49,11 @@ public class ExceptionAdvice {
             throw new IllegalArgumentException("The appropriate handler was not found.");
         }
 
-        additionalExceptionHandlers.forEach(item ->
-                        CompletableFuture.runAsync(() -> item.doHandle(request, response, e, registry), executor)
-        );
+        if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
+            additionalExceptionHandlers.forEach(item ->
+                    CompletableFuture.runAsync(() -> item.doHandle(request, response, e, registry), executor)
+            );
+        }
         return handleDelegated(e, request, response, registry);
     }
 
