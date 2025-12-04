@@ -3,9 +3,11 @@ package org.namul.api.payload.error;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.namul.api.payload.code.BaseErrorCode;
 import org.namul.api.payload.code.dto.ErrorReasonDTO;
-import org.namul.api.payload.handler.ExceptionAdviceHandler;
+import org.namul.api.payload.error.exception.ServerApplicationException;
 import org.namul.api.payload.response.BaseResponse;
+import org.namul.api.payload.writer.FailureResponseWriter;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,7 +22,8 @@ import java.util.concurrent.*;
 @RestControllerAdvice
 public class ExceptionAdvice {
 
-    private final Map<Class<? extends Exception>, ExceptionAdviceRegistry<? extends Exception>> adviceMap;
+    private final FailureResponseWriter failureResponseWriter;
+    private final Map<Class<? extends Exception>, BaseErrorCode> adviceMap;
     private final List<AdditionalExceptionHandler> additionalExceptionHandlers;
 
     private final Executor executor = new ThreadPoolExecutor(
@@ -32,7 +35,8 @@ public class ExceptionAdvice {
             new ThreadPoolExecutor.CallerRunsPolicy()
     );
 
-    ExceptionAdvice(ExceptionAdviceConfigurer exceptionAdviceConfigurer) {
+    public ExceptionAdvice(ExceptionAdviceConfigurer exceptionAdviceConfigurer) {
+        this.failureResponseWriter = exceptionAdviceConfigurer.getFailureResponseWriter();
         this.adviceMap = exceptionAdviceConfigurer.getAdviceMap();
         this.additionalExceptionHandlers = exceptionAdviceConfigurer.getAdditionalExceptionHandlers();
     }
@@ -44,35 +48,33 @@ public class ExceptionAdvice {
      */
     @ExceptionHandler
     public <E extends Exception> BaseResponse handle(E e, HttpServletRequest request, HttpServletResponse response) {
-        ExceptionAdviceRegistry<E> registry = this.findRegistry(e.getClass());
-        if (registry == null) {
+        BaseErrorCode code = e instanceof ServerApplicationException ? ((ServerApplicationException) e).getCode() : this.findRegistry(e.getClass());
+        if (code == null) {
             throw new IllegalArgumentException("The appropriate handler was not found.");
         }
 
         if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
             additionalExceptionHandlers.forEach(item ->
-                    CompletableFuture.runAsync(() -> item.doHandle(request, response, e, registry), executor)
+                    CompletableFuture.runAsync(() -> item.doHandle(request, response, e, code), executor)
             );
         }
-        return handleDelegated(e, request, response, registry);
+        return handleDelegated(e, response, code);
     }
 
     /**
      * Create BaseResponse with handler and errorReasonDTO
      * @param e The exception class
-     * @param request The HttpServletRequest
      * @param response The HttpServletResponse
-     * @param registry The registry contains handler and ErrorReasonDTO
+     * @param code The data to process error response logic
      * @return The created response
      * @param <E> The exception type
      */
-    private <E extends Exception> BaseResponse handleDelegated(E e, HttpServletRequest request, HttpServletResponse response, ExceptionAdviceRegistry<E> registry) {
-        ErrorReasonDTO reasonDTO = registry.getErrorReasonDTO();
-        ExceptionAdviceHandler<E> handler = registry.getHandler();
+    private <E extends Exception> BaseResponse handleDelegated(E e,HttpServletResponse response, BaseErrorCode code) {
+        ErrorReasonDTO reasonDTO = code.getReason();
 
         response.setStatus(reasonDTO.getHttpStatus().value());
 
-        return handler.handleException(e, request, response, reasonDTO);
+        return failureResponseWriter.onFailure(e, reasonDTO);
     }
 
 
@@ -81,15 +83,13 @@ public class ExceptionAdvice {
      * Last handler about Exception class is return. if handler about exception class didn't exist, it will return null
      * @param exceptionClass The exception class occurs
      * @return The exception registry contains handler and ErrorReasonDTO
-     * @param <E> The exception type
      */
-    @SuppressWarnings("unchecked")
-    public <E extends Exception> ExceptionAdviceRegistry<E> findRegistry(Class<? extends Exception> exceptionClass) {
+    public BaseErrorCode findRegistry(Class<? extends Exception> exceptionClass) {
         Class<?> current = exceptionClass;
         while (current != null && Exception.class.isAssignableFrom(current)) {
-            ExceptionAdviceRegistry<?> registry = this.adviceMap.get(current);
-            if (registry != null) {
-                return (ExceptionAdviceRegistry<E>) registry;
+            BaseErrorCode code= this.adviceMap.get(current);
+            if (code != null) {
+                return code;
             }
             current = current.getSuperclass();
         }
