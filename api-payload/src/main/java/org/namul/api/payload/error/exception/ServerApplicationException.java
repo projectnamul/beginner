@@ -1,7 +1,6 @@
 package org.namul.api.payload.error.exception;
 
 import org.namul.api.payload.code.BaseErrorCode;
-import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +12,4 @@ import lombok.RequiredArgsConstructor;
 public class ServerApplicationException extends RuntimeException{
 
     private final BaseErrorCode code;
-    public ErrorReasonDTO getErrorReason() {
-        return this.code.getReason();
-    }
 }
