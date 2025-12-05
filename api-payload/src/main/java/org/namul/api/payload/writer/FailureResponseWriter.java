@@ -1,12 +1,12 @@
 package org.namul.api.payload.writer;
 
-import org.namul.api.payload.code.dto.ErrorReasonDTO;
+import org.namul.api.payload.code.BaseErrorCode;
 import org.namul.api.payload.response.BaseResponse;
 
 /**
  * The class that write responses in case of failure
  */
-public interface FailureResponseWriter {
+public interface FailureResponseWriter<C extends BaseErrorCode> {
 
     /**
      * Make failure response
@@ -14,5 +14,6 @@ public interface FailureResponseWriter {
      * @param e Exception data
      * @return The generated return value
      */
-    BaseResponse onFailure(Exception e, ErrorReasonDTO error);
+    BaseResponse onFailure(Exception e, C error);
+
 }

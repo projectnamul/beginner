@@ -1,5 +1,6 @@
 package org.namul.api.payload.config;
 
+import org.namul.api.payload.code.supports.DefaultBaseErrorCode;
 import org.namul.api.payload.writer.FailureResponseWriter;
 import org.namul.api.payload.writer.supports.DefaultFailureResponseWriter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -11,7 +12,7 @@ public class ExceptionAdviceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(FailureResponseWriter.class)
-    FailureResponseWriter defaultFailureResponseWriter() {
+    FailureResponseWriter<DefaultBaseErrorCode> defaultFailureResponseWriter() {
         return new DefaultFailureResponseWriter();
     }
 
