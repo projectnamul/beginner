@@ -34,7 +34,7 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
             new ThreadPoolExecutor.CallerRunsPolicy()
     );
 
-    public ExceptionAdvice(ExceptionAdviceConfigurer exceptionAdviceConfigurer) {
+    public ExceptionAdvice(ExceptionAdviceConfigurer<R> exceptionAdviceConfigurer) {
         this.failureResponseWriter = exceptionAdviceConfigurer.getFailureResponseWriter();
         this.adviceMap = exceptionAdviceConfigurer.getAdviceMap();
         this.additionalExceptionHandlers = exceptionAdviceConfigurer.getAdditionalExceptionHandlers();
@@ -46,23 +46,19 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
      * @return The Response value after handling exception
      */
     @ExceptionHandler
-    @SuppressWarnings("unchecked")
-    public <E extends Exception> BaseResponse handle(E e, HttpServletRequest request, HttpServletResponse response) {
-
+    public BaseResponse handle(Exception e, HttpServletRequest request, HttpServletResponse response) {
         R code;
+        BaseResponse serverResponse;
         if (e instanceof ServerApplicationException) {
-            try {
-                code = (R) ((ServerApplicationException) e).getCode();
-            } catch (ClassCastException ex1) {
-                code = this.findRegistry(e.getClass());
+            code = handleServerApplicationException((ServerApplicationException) e);
+            if (code == null) {
+                code = handleGeneralException(e);
             }
         }
         else {
-            code = this.findRegistry(e.getClass());
+            code = handleGeneralException(e);
         }
-        if (code == null) {
-            throw new IllegalArgumentException("The appropriate handler was not found.");
-        }
+        serverResponse = handleDelegated(e, response, code);
 
         if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
             R finalCode = code;
@@ -70,7 +66,47 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
                     CompletableFuture.runAsync(() -> item.doHandle(request, response, e, finalCode), executor)
             );
         }
-        return handleDelegated(e, response, code);
+        return serverResponse;
+
+    }
+
+    /**
+     * Get BaseErrorCode when only ServerApplicationException occurs
+     * @param e The info of ServerApplicationException
+     * @return The BaseErrorCode to create response
+     */
+    @SuppressWarnings("unchecked")
+    private R handleServerApplicationException(ServerApplicationException e) {
+        R code;
+        BaseErrorCode saeBaseErrorCode = e.getCode();
+        if (saeBaseErrorCode != null) {
+            try {
+                code = (R) e.getCode();
+                return code;
+            } catch (ClassCastException cce) {
+                log.warn("ServerApplicationException's internal BaseErrorCode type ({}) is not compatible with ExceptionAdvice's declared R type ({}). Searching registry.",
+                        saeBaseErrorCode.getClass().getSimpleName(),
+                        "Unknown (due to Type Erasure - R)",
+                        cce);
+                return null;
+            }
+        } else {
+            log.warn("ServerApplicationException contains null BaseErrorCode. Searching registry.");
+            return null;
+        }
+    }
+
+    /**
+     * Get BaseErrorCode when exception occurs
+     * @param e The info of exception
+     * @return The BaseErrorCode to create response
+     */
+    private R handleGeneralException(Exception e) {
+        R code = this.findCode(e.getClass());
+        if (code == null) {
+            throw new IllegalArgumentException("The appropriate handler was not found.");
+        }
+        return code;
     }
 
     /**
@@ -79,21 +115,20 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
      * @param response The HttpServletResponse
      * @param code The data to process error response logic
      * @return The created response
-     * @param <E> The exception type
      */
-    private <E extends Exception> BaseResponse handleDelegated(E e,HttpServletResponse response, R code) {
+    private BaseResponse handleDelegated(Exception e,HttpServletResponse response, R code) {
         response.setStatus(code.getHttpStatus().value());
         return failureResponseWriter.onFailure(e, code);
     }
 
 
     /**
-     * Find registry(handler, error reason) in map repository, First, find exception class in map. if handler about exception class is not found, find handler about super class.
+     * Find BaseErrorCode in map repository, First, find exception class in map. if handler about exception class is not found, find handler about super class.
      * Last handler about Exception class is return. if handler about exception class didn't exist, it will return null
      * @param exceptionClass The exception class occurs
-     * @return The exception registry contains handler and ErrorReasonDTO
+     * @return BaseErrorCode to be used for response generation
      */
-    public R findRegistry(Class<? extends Exception> exceptionClass) {
+    public R findCode(Class<? extends Exception> exceptionClass) {
         Class<?> current = exceptionClass;
         while (current != null && Exception.class.isAssignableFrom(current)) {
             R code= this.adviceMap.get(current);
