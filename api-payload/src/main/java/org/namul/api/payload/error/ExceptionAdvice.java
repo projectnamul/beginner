@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.namul.api.payload.code.BaseErrorCode;
-import org.namul.api.payload.code.dto.ErrorReasonDTO;
 import org.namul.api.payload.error.exception.ServerApplicationException;
 import org.namul.api.payload.response.BaseResponse;
 import org.namul.api.payload.writer.FailureResponseWriter;
@@ -20,10 +19,10 @@ import java.util.concurrent.*;
  */
 @Slf4j
 @RestControllerAdvice
-public class ExceptionAdvice {
+public class ExceptionAdvice<R extends BaseErrorCode> {
 
-    private final FailureResponseWriter failureResponseWriter;
-    private final Map<Class<? extends Exception>, BaseErrorCode> adviceMap;
+    private final FailureResponseWriter<R> failureResponseWriter;
+    private final Map<Class<? extends Exception>, R> adviceMap;
     private final List<AdditionalExceptionHandler> additionalExceptionHandlers;
 
     private final Executor executor = new ThreadPoolExecutor(
@@ -47,15 +46,28 @@ public class ExceptionAdvice {
      * @return The Response value after handling exception
      */
     @ExceptionHandler
+    @SuppressWarnings("unchecked")
     public <E extends Exception> BaseResponse handle(E e, HttpServletRequest request, HttpServletResponse response) {
-        BaseErrorCode code = e instanceof ServerApplicationException ? ((ServerApplicationException) e).getCode() : this.findRegistry(e.getClass());
+
+        R code;
+        if (e instanceof ServerApplicationException) {
+            try {
+                code = (R) ((ServerApplicationException) e).getCode();
+            } catch (ClassCastException ex1) {
+                code = this.findRegistry(e.getClass());
+            }
+        }
+        else {
+            code = this.findRegistry(e.getClass());
+        }
         if (code == null) {
             throw new IllegalArgumentException("The appropriate handler was not found.");
         }
 
         if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
+            R finalCode = code;
             additionalExceptionHandlers.forEach(item ->
-                    CompletableFuture.runAsync(() -> item.doHandle(request, response, e, code), executor)
+                    CompletableFuture.runAsync(() -> item.doHandle(request, response, e, finalCode), executor)
             );
         }
         return handleDelegated(e, response, code);
@@ -69,12 +81,9 @@ public class ExceptionAdvice {
      * @return The created response
      * @param <E> The exception type
      */
-    private <E extends Exception> BaseResponse handleDelegated(E e,HttpServletResponse response, BaseErrorCode code) {
-        ErrorReasonDTO reasonDTO = code.getReason();
-
-        response.setStatus(reasonDTO.getHttpStatus().value());
-
-        return failureResponseWriter.onFailure(e, reasonDTO);
+    private <E extends Exception> BaseResponse handleDelegated(E e,HttpServletResponse response, R code) {
+        response.setStatus(code.getHttpStatus().value());
+        return failureResponseWriter.onFailure(e, code);
     }
 
 
@@ -84,10 +93,10 @@ public class ExceptionAdvice {
      * @param exceptionClass The exception class occurs
      * @return The exception registry contains handler and ErrorReasonDTO
      */
-    public BaseErrorCode findRegistry(Class<? extends Exception> exceptionClass) {
+    public R findRegistry(Class<? extends Exception> exceptionClass) {
         Class<?> current = exceptionClass;
         while (current != null && Exception.class.isAssignableFrom(current)) {
-            BaseErrorCode code= this.adviceMap.get(current);
+            R code= this.adviceMap.get(current);
             if (code != null) {
                 return code;
             }

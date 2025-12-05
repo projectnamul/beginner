@@ -1,11 +1,12 @@
 package org.namul.api.payload.error;
 
-import org.namul.api.payload.code.DefaultResponseErrorCode;
+import org.namul.api.payload.code.supports.DefaultBaseErrorCode;
+import org.namul.api.payload.code.supports.DefaultResponseErrorCode;
 import org.namul.api.payload.writer.FailureResponseWriter;
 
-public class DefaultExceptionAdviceConfigurer extends ExceptionAdviceConfigurer {
+public class DefaultExceptionAdviceConfigurer extends ExceptionAdviceConfigurer<DefaultBaseErrorCode> {
 
-    public DefaultExceptionAdviceConfigurer(FailureResponseWriter failureResponseWriter) {
+    public DefaultExceptionAdviceConfigurer(FailureResponseWriter<DefaultBaseErrorCode> failureResponseWriter) {
         super(failureResponseWriter);
         super
                 .addConstraintViolation(DefaultResponseErrorCode._CONSTRAINT_VIOLATION)
