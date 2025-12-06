@@ -40,15 +40,15 @@ public class DefaultResponse<T> extends AbstractBaseResponse<T> {
     }
 
     public static <T> DefaultResponse<T> ok(T result) {
-        return onSuccess(DefaultResponseSuccessCode._OK, result);
+        return onSuccess(DefaultResponseSuccessCode.OK, result);
     }
 
     public static <T> DefaultResponse<T> created(T result) {
-        return onSuccess(DefaultResponseSuccessCode._CREATED, result);
+        return onSuccess(DefaultResponseSuccessCode.CREATED, result);
     }
 
     public static <T> DefaultResponse<T> noContent() {
-        return onSuccess(DefaultResponseSuccessCode._DELETED, null);
+        return onSuccess(DefaultResponseSuccessCode.DELETED, null);
     }
 
     public static <T> DefaultResponse<T> onSuccess(DefaultBaseSuccessCode code, T result) {
