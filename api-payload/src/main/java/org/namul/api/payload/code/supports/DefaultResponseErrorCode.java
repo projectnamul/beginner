@@ -1,6 +1,5 @@
-package org.namul.api.payload.code;
+package org.namul.api.payload.code.supports;
 
-import org.namul.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,7 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 @AllArgsConstructor
-public enum DefaultResponseErrorCode implements BaseErrorCode {
+public enum DefaultResponseErrorCode implements DefaultBaseErrorCode {
     _INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON500", "서버 에러, 관리자에게 문의 바랍니다."),
     _BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON400", "잘못된 요청입니다."),
     _HTTP_MESSAGE_NOT_READABLE(HttpStatus.BAD_REQUEST, "COMMON400_1", "요청 본문이 올바르지 않거나 형식이 맞지 않습니다."),
@@ -29,15 +28,4 @@ public enum DefaultResponseErrorCode implements BaseErrorCode {
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
-
-    @Override
-    public DefaultResponseErrorReasonDTO getReason() {
-        return DefaultResponseErrorReasonDTO.builder()
-                .httpStatus(this.httpStatus)
-                .message(this.message)
-                .code(this.code)
-                .isSuccess(false)
-                .build();
-    }
-
 }
