@@ -9,15 +9,15 @@ public class DefaultExceptionAdviceConfigurer extends ExceptionAdviceConfigurer<
     public DefaultExceptionAdviceConfigurer(FailureResponseWriter<DefaultBaseErrorCode> failureResponseWriter) {
         super(failureResponseWriter);
         super
-                .addConstraintViolation(DefaultResponseErrorCode._CONSTRAINT_VIOLATION)
-                .addMethodArgumentNotValid(DefaultResponseErrorCode._METHOD_ARGUMENT_NOT_VALID)
-                .addHttpMessageNotReadable(DefaultResponseErrorCode._HTTP_MESSAGE_NOT_READABLE)
-                .addHttpRequestMethodNotSupported(DefaultResponseErrorCode._HTTP_REQUEST_METHOD_NOT_SUPPORTED)
-                .addMissingPathVariable(DefaultResponseErrorCode._MISSING_REQUEST_VALUE)
-                .addMissingServletRequestParameter(DefaultResponseErrorCode._MISSING_REQUEST_VALUE)
-                .addNoResourceFound(DefaultResponseErrorCode._NO_RESOURCE_FOUND)
-                .addTypeMismatch(DefaultResponseErrorCode._TYPE_MISMATCH)
-                .addServerApplication(DefaultResponseErrorCode._BAD_REQUEST)
-                .addGlobalException(DefaultResponseErrorCode._INTERNAL_SERVER_ERROR);
+                .addConstraintViolation(DefaultResponseErrorCode.CONSTRAINT_VIOLATION)
+                .addMethodArgumentNotValid(DefaultResponseErrorCode.METHOD_ARGUMENT_NOT_VALID)
+                .addHttpMessageNotReadable(DefaultResponseErrorCode.HTTP_MESSAGE_NOT_READABLE)
+                .addHttpRequestMethodNotSupported(DefaultResponseErrorCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED)
+                .addMissingPathVariable(DefaultResponseErrorCode.MISSING_REQUEST_VALUE)
+                .addMissingServletRequestParameter(DefaultResponseErrorCode.MISSING_REQUEST_VALUE)
+                .addNoResourceFound(DefaultResponseErrorCode.NO_RESOURCE_FOUND)
+                .addTypeMismatch(DefaultResponseErrorCode.TYPE_MISMATCH)
+                .addServerApplication(DefaultResponseErrorCode.BAD_REQUEST)
+                .addGlobalException(DefaultResponseErrorCode.INTERNAL_SERVER_ERROR);
     }
 }
