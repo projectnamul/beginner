@@ -6,7 +6,7 @@ import org.namul.api.payload.response.BaseResponse;
 /**
  * The class that write responses in case of failure
  */
-public interface FailureResponseWriter<C extends BaseErrorCode> {
+public interface FailureResponseWriter<T extends BaseErrorCode> {
 
     /**
      * Make failure response
@@ -14,6 +14,6 @@ public interface FailureResponseWriter<C extends BaseErrorCode> {
      * @param e Exception data
      * @return The generated return value
      */
-    BaseResponse onFailure(Exception e, C error);
+    BaseResponse onFailure(Exception e, T error);
 
 }

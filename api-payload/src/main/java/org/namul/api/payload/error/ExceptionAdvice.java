@@ -16,14 +16,15 @@ import java.util.concurrent.*;
 
 /**
  * The class for Error handling when error occurs.
+ * @param <T> The interface implementing BaseErrorCode which have method to make response
  */
 @Slf4j
 @RestControllerAdvice
-public class ExceptionAdvice<R extends BaseErrorCode> {
+public class ExceptionAdvice<T extends BaseErrorCode> {
 
-    private final FailureResponseWriter<R> failureResponseWriter;
-    private final Map<Class<? extends Exception>, R> adviceMap;
-    private final List<AdditionalExceptionHandler<R>> additionalExceptionHandlers;
+    private final FailureResponseWriter<T> failureResponseWriter;
+    private final Map<Class<? extends Exception>, T> adviceMap;
+    private final List<AdditionalExceptionHandler<T>> additionalExceptionHandlers;
 
     private final Executor executor = new ThreadPoolExecutor(
             10,
@@ -34,7 +35,7 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
             new ThreadPoolExecutor.CallerRunsPolicy()
     );
 
-    public ExceptionAdvice(ExceptionAdviceConfigurer<R> exceptionAdviceConfigurer) {
+    public ExceptionAdvice(ExceptionAdviceConfigurer<T> exceptionAdviceConfigurer) {
         this.failureResponseWriter = exceptionAdviceConfigurer.getFailureResponseWriter();
         this.adviceMap = exceptionAdviceConfigurer.getAdviceMap();
         this.additionalExceptionHandlers = exceptionAdviceConfigurer.getAdditionalExceptionHandlers();
@@ -47,7 +48,7 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
      */
     @ExceptionHandler
     public BaseResponse handle(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        R code;
+        T code;
         BaseResponse serverResponse;
         if (e instanceof ServerApplicationException) {
             code = handleServerApplicationException((ServerApplicationException) e);
@@ -61,7 +62,7 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
         serverResponse = handleDelegated(e, response, code);
 
         if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
-            R finalCode = code;
+            T finalCode = code;
             additionalExceptionHandlers.forEach(item ->
                     CompletableFuture.runAsync(() -> item.doHandle(request, response, e, finalCode), executor)
             );
@@ -76,12 +77,12 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
      * @return The BaseErrorCode to create response
      */
     @SuppressWarnings("unchecked")
-    private R handleServerApplicationException(ServerApplicationException e) {
-        R code;
+    private T handleServerApplicationException(ServerApplicationException e) {
+        T code;
         BaseErrorCode saeBaseErrorCode = e.getCode();
         if (saeBaseErrorCode != null) {
             try {
-                code = (R) e.getCode();
+                code = (T) e.getCode();
                 return code;
             } catch (ClassCastException cce) {
                 log.warn("ServerApplicationException's internal BaseErrorCode type ({}) is not compatible with ExceptionAdvice's declared R type ({}). Searching registry.",
@@ -101,8 +102,8 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
      * @param e The info of exception
      * @return The BaseErrorCode to create response
      */
-    private R handleGeneralException(Exception e) {
-        R code = this.findCode(e.getClass());
+    private T handleGeneralException(Exception e) {
+        T code = this.findCode(e.getClass());
         if (code == null) {
             throw new IllegalArgumentException("The appropriate handler was not found.");
         }
@@ -116,7 +117,7 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
      * @param code The data to process error response logic
      * @return The created response
      */
-    private BaseResponse handleDelegated(Exception e,HttpServletResponse response, R code) {
+    private BaseResponse handleDelegated(Exception e,HttpServletResponse response, T code) {
         response.setStatus(code.getHttpStatus().value());
         return failureResponseWriter.onFailure(e, code);
     }
@@ -128,10 +129,10 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
      * @param exceptionClass The exception class occurs
      * @return BaseErrorCode to be used for response generation
      */
-    public R findCode(Class<? extends Exception> exceptionClass) {
+    public T findCode(Class<? extends Exception> exceptionClass) {
         Class<?> current = exceptionClass;
         while (current != null && Exception.class.isAssignableFrom(current)) {
-            R code= this.adviceMap.get(current);
+            T code= this.adviceMap.get(current);
             if (code != null) {
                 return code;
             }
