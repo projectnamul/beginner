@@ -9,7 +9,6 @@ public class DefaultExceptionAdviceConfigurer extends ExceptionAdviceConfigurer<
     public DefaultExceptionAdviceConfigurer(FailureResponseWriter<DefaultBaseErrorCode> failureResponseWriter) {
         super(failureResponseWriter);
         super
-                .addConstraintViolation(DefaultResponseErrorCode.CONSTRAINT_VIOLATION)
                 .addMethodArgumentNotValid(DefaultResponseErrorCode.METHOD_ARGUMENT_NOT_VALID)
                 .addHttpMessageNotReadable(DefaultResponseErrorCode.HTTP_MESSAGE_NOT_READABLE)
                 .addHttpRequestMethodNotSupported(DefaultResponseErrorCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED)

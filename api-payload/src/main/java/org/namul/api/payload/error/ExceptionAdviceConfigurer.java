@@ -1,6 +1,5 @@
 package org.namul.api.payload.error;
 
-import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.namul.api.payload.code.BaseErrorCode;
@@ -18,24 +17,25 @@ import java.util.*;
 
 /**
  * The class how ExceptionAdvice handles exception
+ * @param <T> The interface implementing BaseErrorCode which have method to make response
  */
 @Getter
 @RequiredArgsConstructor
-public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
+public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
 
-    private final Map<Class<? extends Exception>, R> adviceMap = new HashMap<>();
-    private final FailureResponseWriter<R> failureResponseWriter;
-    private final List<AdditionalExceptionHandler> additionalExceptionHandlers = new ArrayList<>();
+    private final Map<Class<? extends Exception>, T> errorCodeMap = new HashMap<>();
+    private final FailureResponseWriter<T> failureResponseWriter;
+    private final List<AdditionalExceptionHandler<T>> additionalExceptionHandlers = new ArrayList<>();
 
     /**
-     * The method for Default configuration
+     * The method for Default configuration it contains MethodArgumentNotValid, HttpMessageNotReadable, HttpRequestMethodNotSupported, MissingPathVariable, MissingServletRequestParameter, NoResourceFound, TypeMismatch, ServerApplication and Exception
+     * it set Exception to have internalServerErrorCode and other Exceptions to have badRequestError
      * @param badRequestError The BaseErrorCode that can return ErrorReasonDTO for bad request error
      * @param internalServerError The BaseErrorCode that can return ErrorReasonDTO for internal server error
      */
-    public ExceptionAdviceConfigurer<R> withDefault(R badRequestError,
-                                                 R internalServerError) {
+    public ExceptionAdviceConfigurer<T> withDefault(T badRequestError,
+                                                    T internalServerError) {
         return this
-                .addConstraintViolation(badRequestError)
                 .addMethodArgumentNotValid(badRequestError)
                 .addHttpMessageNotReadable(badRequestError)
                 .addHttpRequestMethodNotSupported(badRequestError)
@@ -51,7 +51,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * Add AdditionalExceptionHandler in ExceptionAdvice
      * @param additionalExceptionHandler The Handler for additional function
      */
-    public ExceptionAdviceConfigurer<R> addAdditionalExceptionHandler(AdditionalExceptionHandler additionalExceptionHandler) {
+    public ExceptionAdviceConfigurer<T> addAdditionalExceptionHandler(AdditionalExceptionHandler<T> additionalExceptionHandler) {
         this.additionalExceptionHandlers.add(additionalExceptionHandler);
         return this;
     }
@@ -60,24 +60,16 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * Add AdditionalExceptionHandler in ExceptionAdvice
      * @param additionalExceptionHandlers The Handlers for additional function
      */
-    public ExceptionAdviceConfigurer<R> addAdditionalExceptionHandlers(List<AdditionalExceptionHandler> additionalExceptionHandlers) {
+    public ExceptionAdviceConfigurer<T> addAdditionalExceptionHandlers(List<AdditionalExceptionHandler<T>> additionalExceptionHandlers) {
         this.additionalExceptionHandlers.addAll(additionalExceptionHandlers);
         return this;
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about ConstraintViolationException
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ExceptionAdviceConfigurer<R> addConstraintViolation(R code) {
-        return this.addAdvice(ConstraintViolationException.class, code);
     }
 
     /**
      * The method that add ErrorReasonDTO with default handler about MethodArgumentNotValidException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addMethodArgumentNotValid(R code) {
+    public ExceptionAdviceConfigurer<T> addMethodArgumentNotValid(T code) {
         return this.addAdvice(MethodArgumentNotValidException.class, code);
     }
 
@@ -85,7 +77,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about HttpMessageNotReadableException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addHttpMessageNotReadable(R code) {
+    public ExceptionAdviceConfigurer<T> addHttpMessageNotReadable(T code) {
         return this.addAdvice(HttpMessageNotReadableException.class, code);
     }
 
@@ -93,7 +85,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about HttpRequestMethodNotSupported
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addHttpRequestMethodNotSupported(R code) {
+    public ExceptionAdviceConfigurer<T> addHttpRequestMethodNotSupported(T code) {
         return this.addAdvice(HttpRequestMethodNotSupportedException.class, code);
     }
 
@@ -101,7 +93,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about MissingPathVariableException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addMissingPathVariable(R code) {
+    public ExceptionAdviceConfigurer<T> addMissingPathVariable(T code) {
         return this.addAdvice(MissingPathVariableException.class, code);
     }
 
@@ -109,7 +101,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about MissingServletRequestParameterException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addMissingServletRequestParameter(R code) {
+    public ExceptionAdviceConfigurer<T> addMissingServletRequestParameter(T code) {
         return this.addAdvice(MissingServletRequestParameterException.class, code);
     }
 
@@ -117,7 +109,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about NoResourceFoundException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addNoResourceFound(R code) {
+    public ExceptionAdviceConfigurer<T> addNoResourceFound(T code) {
         return this.addAdvice(NoResourceFoundException.class, code);
     }
 
@@ -125,7 +117,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about TypeMismatchException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addTypeMismatch(R code) {
+    public ExceptionAdviceConfigurer<T> addTypeMismatch(T code) {
         return this.addAdvice(TypeMismatchException.class, code);
     }
 
@@ -133,7 +125,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about ServerApplicationException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addServerApplication(R code) {
+    public ExceptionAdviceConfigurer<T> addServerApplication(T code) {
         return this.addAdvice(ServerApplicationException.class, code);
     }
 
@@ -141,7 +133,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about Exception
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<R> addGlobalException(R code) {
+    public ExceptionAdviceConfigurer<T> addGlobalException(T code) {
         return this.addAdvice(Exception.class, code);
     }
 
@@ -151,8 +143,8 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      * @param <E> The exception type
      */
-    public <E extends Exception> ExceptionAdviceConfigurer<R> addAdvice(Class<E> cls, R code) {
-        this.adviceMap.put(cls, code);
+    public <E extends Exception> ExceptionAdviceConfigurer<T> addAdvice(Class<E> cls, T code) {
+        this.errorCodeMap.put(cls, code);
         return this;
     }
 
@@ -161,8 +153,8 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * @param cls The exception class is handled by handler
      * @param <E> The exception type
      */
-    public <E extends Exception> ExceptionAdviceConfigurer<R> deleteAdvice(Class<E> cls) {
-        this.adviceMap.remove(cls);
+    public <E extends Exception> ExceptionAdviceConfigurer<T> deleteAdvice(Class<E> cls) {
+        this.errorCodeMap.remove(cls);
         return this;
     }
 
@@ -170,7 +162,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * Build Exception Advice with configuration settings
      * @return The configured ExceptionAdvice
      */
-    public ExceptionAdvice<R> build() {
+    public ExceptionAdvice<T> build() {
         return new ExceptionAdvice<>(this);
     }
 

@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-public class ExceptionAdviceAutoConfiguration {
+public class DefaultFailureResponseWriterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(FailureResponseWriter.class)

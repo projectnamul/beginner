@@ -17,7 +17,6 @@ public enum DefaultResponseErrorCode implements DefaultBaseErrorCode {
     NO_RESOURCE_FOUND(HttpStatus.BAD_REQUEST, "COMON400_3", "The requested API endpoint does not exist."),
     MISSING_REQUEST_VALUE(HttpStatus.BAD_REQUEST, "COMMON400_4", "A required request variable is missing or invalid."),
     TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "COMMON400_5", "The type of a request parameter is incorrect."),
-    CONSTRAINT_VIOLATION(HttpStatus.BAD_REQUEST, "COMMON400_6", "A request parameter violates specified constraints."),
     METHOD_ARGUMENT_NOT_VALID(HttpStatus.BAD_REQUEST, "COMMON400_7", "The request data provided is not valid."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON401_1", "Authentication is required to access this resource."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403_1", "You do not have permission to access this resource."),
