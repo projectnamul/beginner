@@ -1,17 +1,18 @@
 package org.namul.api.payload.code;
 
-import org.namul.api.payload.code.dto.ErrorReasonDTO;
+import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
 /**
- * Interface for implementing data on failures
+ * Interface which have base getter to create Error response
+ * It only provides and needs getHttpStatus to gain HttpStatus from several Exceptions
+ * You can implement or extend this interface to add data or methods for creating your own response.
  */
 public interface BaseErrorCode extends Serializable {
     /**
-     * The method to get ErrorReasonDTO
-     * @return The ErrorReasonDTO contains data about failure
+     * The method to get HttpStatus
+     * @return The HttpStatus when success
      */
-    ErrorReasonDTO getReason();
-
+    HttpStatus getHttpStatus();
 }

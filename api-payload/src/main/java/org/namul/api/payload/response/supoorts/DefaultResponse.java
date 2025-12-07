@@ -1,12 +1,13 @@
-package org.namul.api.payload.response;
+package org.namul.api.payload.response.supoorts;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import lombok.Setter;
-import org.namul.api.payload.code.DefaultResponseSuccessCode;
-import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO;
+import org.namul.api.payload.code.supports.DefaultBaseSuccessCode;
+import org.namul.api.payload.code.supports.DefaultResponseSuccessCode;
+import org.namul.api.payload.response.AbstractBaseResponse;
 
 /**
  * The classes for Unifying Responses
@@ -39,18 +40,18 @@ public class DefaultResponse<T> extends AbstractBaseResponse<T> {
     }
 
     public static <T> DefaultResponse<T> ok(T result) {
-        return onSuccess(DefaultResponseSuccessCode._OK.getReason(), result);
+        return onSuccess(DefaultResponseSuccessCode.OK, result);
     }
 
     public static <T> DefaultResponse<T> created(T result) {
-        return onSuccess(DefaultResponseSuccessCode._CREATED.getReason(), result);
+        return onSuccess(DefaultResponseSuccessCode.CREATED, result);
     }
 
     public static <T> DefaultResponse<T> noContent() {
-        return onSuccess(DefaultResponseSuccessCode._DELETED.getReason(), null);
+        return onSuccess(DefaultResponseSuccessCode.DELETED, null);
     }
 
-    public static <T> DefaultResponse<T> onSuccess(DefaultResponseSuccessReasonDTO code, T result) {
-        return new DefaultResponse<>(code.isSuccess(), code.getCode(), code.getMessage(), result);
+    public static <T> DefaultResponse<T> onSuccess(DefaultBaseSuccessCode code, T result) {
+        return new DefaultResponse<>(true, code.getCode(), code.getMessage(), result);
     }
 }

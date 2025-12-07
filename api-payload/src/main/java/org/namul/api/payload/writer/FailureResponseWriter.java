@@ -1,19 +1,21 @@
 package org.namul.api.payload.writer;
 
-import org.namul.api.payload.code.dto.ErrorReasonDTO;
+import org.namul.api.payload.code.BaseErrorCode;
 import org.namul.api.payload.response.BaseResponse;
 
 /**
- * The class that write responses in case of failure
+ * The class that write responses in case of failure.
+ * if you make interface or class with BaseErrorCode, you can implement this interface and make class which create response with your own interface
+ * @param <T> The interface implementing BaseErrorCode which have method to make response
  */
-public interface FailureResponseWriter {
+public interface FailureResponseWriter<T extends BaseErrorCode> {
 
     /**
-     * Make failure response
+     * Make failure response.
      * @param error The data about how to fail
-     * @param result The additional data for failures to put in return value
+     * @param e Exception data
      * @return The generated return value
-     * @param <T> The generic for result value
      */
-    <T> BaseResponse onFailure(ErrorReasonDTO error, T result);
+    BaseResponse onFailure(Exception e, T error);
+
 }
