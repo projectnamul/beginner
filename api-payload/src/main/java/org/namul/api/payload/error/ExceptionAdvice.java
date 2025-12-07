@@ -23,7 +23,7 @@ public class ExceptionAdvice<R extends BaseErrorCode> {
 
     private final FailureResponseWriter<R> failureResponseWriter;
     private final Map<Class<? extends Exception>, R> adviceMap;
-    private final List<AdditionalExceptionHandler> additionalExceptionHandlers;
+    private final List<AdditionalExceptionHandler<R>> additionalExceptionHandlers;
 
     private final Executor executor = new ThreadPoolExecutor(
             10,

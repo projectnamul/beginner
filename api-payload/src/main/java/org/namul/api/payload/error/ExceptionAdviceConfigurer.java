@@ -25,7 +25,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
 
     private final Map<Class<? extends Exception>, R> adviceMap = new HashMap<>();
     private final FailureResponseWriter<R> failureResponseWriter;
-    private final List<AdditionalExceptionHandler> additionalExceptionHandlers = new ArrayList<>();
+    private final List<AdditionalExceptionHandler<R>> additionalExceptionHandlers = new ArrayList<>();
 
     /**
      * The method for Default configuration
@@ -51,7 +51,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * Add AdditionalExceptionHandler in ExceptionAdvice
      * @param additionalExceptionHandler The Handler for additional function
      */
-    public ExceptionAdviceConfigurer<R> addAdditionalExceptionHandler(AdditionalExceptionHandler additionalExceptionHandler) {
+    public ExceptionAdviceConfigurer<R> addAdditionalExceptionHandler(AdditionalExceptionHandler<R> additionalExceptionHandler) {
         this.additionalExceptionHandlers.add(additionalExceptionHandler);
         return this;
     }
@@ -60,7 +60,7 @@ public class ExceptionAdviceConfigurer<R extends BaseErrorCode> {
      * Add AdditionalExceptionHandler in ExceptionAdvice
      * @param additionalExceptionHandlers The Handlers for additional function
      */
-    public ExceptionAdviceConfigurer<R> addAdditionalExceptionHandlers(List<AdditionalExceptionHandler> additionalExceptionHandlers) {
+    public ExceptionAdviceConfigurer<R> addAdditionalExceptionHandlers(List<AdditionalExceptionHandler<R>> additionalExceptionHandlers) {
         this.additionalExceptionHandlers.addAll(additionalExceptionHandlers);
         return this;
     }
