@@ -1,6 +1,5 @@
 package org.namul.api.payload.error;
 
-import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.namul.api.payload.code.BaseErrorCode;
@@ -37,7 +36,6 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
     public ExceptionAdviceConfigurer<T> withDefault(T badRequestError,
                                                     T internalServerError) {
         return this
-                .addConstraintViolation(badRequestError)
                 .addMethodArgumentNotValid(badRequestError)
                 .addHttpMessageNotReadable(badRequestError)
                 .addHttpRequestMethodNotSupported(badRequestError)
@@ -65,14 +63,6 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
     public ExceptionAdviceConfigurer<T> addAdditionalExceptionHandlers(List<AdditionalExceptionHandler<T>> additionalExceptionHandlers) {
         this.additionalExceptionHandlers.addAll(additionalExceptionHandlers);
         return this;
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about ConstraintViolationException
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ExceptionAdviceConfigurer<T> addConstraintViolation(T code) {
-        return this.addAdvice(ConstraintViolationException.class, code);
     }
 
     /**
