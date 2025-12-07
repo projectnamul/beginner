@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 public class ExceptionAdvice<T extends BaseErrorCode> {
 
     private final FailureResponseWriter<T> failureResponseWriter;
-    private final Map<Class<? extends Exception>, T> adviceMap;
+    private final Map<Class<? extends Exception>, T> errorCodeMap;
     private final List<AdditionalExceptionHandler<T>> additionalExceptionHandlers;
 
     private final Executor executor = new ThreadPoolExecutor(
@@ -37,7 +37,7 @@ public class ExceptionAdvice<T extends BaseErrorCode> {
 
     public ExceptionAdvice(ExceptionAdviceConfigurer<T> exceptionAdviceConfigurer) {
         this.failureResponseWriter = exceptionAdviceConfigurer.getFailureResponseWriter();
-        this.adviceMap = exceptionAdviceConfigurer.getAdviceMap();
+        this.errorCodeMap = exceptionAdviceConfigurer.getErrorCodeMap();
         this.additionalExceptionHandlers = exceptionAdviceConfigurer.getAdditionalExceptionHandlers();
     }
 
@@ -132,7 +132,7 @@ public class ExceptionAdvice<T extends BaseErrorCode> {
     public T findCode(Class<? extends Exception> exceptionClass) {
         Class<?> current = exceptionClass;
         while (current != null && Exception.class.isAssignableFrom(current)) {
-            T code= this.adviceMap.get(current);
+            T code= this.errorCodeMap.get(current);
             if (code != null) {
                 return code;
             }

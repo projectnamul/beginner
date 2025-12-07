@@ -24,12 +24,13 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
 
-    private final Map<Class<? extends Exception>, T> adviceMap = new HashMap<>();
+    private final Map<Class<? extends Exception>, T> errorCodeMap = new HashMap<>();
     private final FailureResponseWriter<T> failureResponseWriter;
     private final List<AdditionalExceptionHandler<T>> additionalExceptionHandlers = new ArrayList<>();
 
     /**
-     * The method for Default configuration
+     * The method for Default configuration it contains MethodArgumentNotValid, HttpMessageNotReadable, HttpRequestMethodNotSupported, MissingPathVariable, MissingServletRequestParameter, NoResourceFound, TypeMismatch, ServerApplication and Exception
+     * it set Exception to have internalServerErrorCode and other Exceptions to have badRequestError
      * @param badRequestError The BaseErrorCode that can return ErrorReasonDTO for bad request error
      * @param internalServerError The BaseErrorCode that can return ErrorReasonDTO for internal server error
      */
@@ -153,7 +154,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * @param <E> The exception type
      */
     public <E extends Exception> ExceptionAdviceConfigurer<T> addAdvice(Class<E> cls, T code) {
-        this.adviceMap.put(cls, code);
+        this.errorCodeMap.put(cls, code);
         return this;
     }
 
@@ -163,7 +164,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * @param <E> The exception type
      */
     public <E extends Exception> ExceptionAdviceConfigurer<T> deleteAdvice(Class<E> cls) {
-        this.adviceMap.remove(cls);
+        this.errorCodeMap.remove(cls);
         return this;
     }
 
