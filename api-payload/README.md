@@ -1,51 +1,86 @@
 # Api Payload
-The module to unify response you can use DefaultResponse and your custom response
+The module to unify response you can use DefaultResponse or your custom response
 
 ## Default
 ### How to add ExceptionAdvice with DefaultResponse
 Just add one config file. 
 
-Because DefaultResponseWriteUtil and DefaultResponseWriter is already registered in Bean, If you have not registered a bean object which implement that interfaces
+Because `DefaultResponseWriter` is already registered in Bean, If you have not registered class which implement that `FailureResponseWriter` interfaces to bean
 
 ```java
 @Configuration
 public class ExceptionAdviceConfig {
 
     @Bean
-    ExceptionAdvice defaultExceptionAdviceConfigurer(
-            FailureResponseWriter failureResponseWriter,
-            List<AdditionalExceptionHandler> additionalExceptionHandlers
+    ExceptionAdvice<DefaultBaseErrorCode> defaultExceptionAdviceConfigurer(
+            FailureResponseWriter<DefaultBaseErrorCode> failureResponseWriter,
+            List<AdditionalExceptionHandler<DefaultBaseErrorCode>> additionalExceptionHandlers
     ) {
         return new DefaultExceptionAdviceConfigurer(failureResponseWriter)
                 .addAdditionalExceptionHandlers(additionalExceptionHandlers)
-//                .addAdditionalExceptionHandler(logAdditionalExceptionHandler())
                 .build();
-    }
-
-    // If you want to make log
-    @Bean
-    LogAdditionalExceptionHandler logAdditionalExceptionHandler() {
-        return new LogAdditionalExceptionHandler();
     }
 }
 ```
 
 ### How to use DefaultResponse in RestController
 
-You can use DefaultResponseWriter which is already registered in bean with DI
+You can use static method of DefaultResponse or constructor
 
 ```java
 @RestController
-@RequiredArgsConstructor
 public class TestController {
-
-    private final DefaultSuccessResponseWriter responseWriter;
 
     @GetMapping("/success")
     public DefaultResponse<String> success() {
-        return responseWriter.ok("success"); // you can use DTO class instead of "success"
-        // or
-        // return DefaultResponse.ok("success");
+         return DefaultResponse.ok("success");
+    }
+}
+```
+
+### How to add AdditionalExceptionHandler
+You can add additional logic with implementing AdditionalExceptionHandler and add it to bean.
+
+```java
+@Slf4j
+@Component
+public class ExceptionAdviceLoggingHandler implements AdditionalExceptionHandler<DefaultBaseErrorCode> {
+
+    @Override
+    public void doHandle(HttpServletRequest request, HttpServletResponse response, Exception e, DefaultBaseErrorCode code) {
+        log.warn("Error occur: class: {}, message: {}", e.getClass(), code.getMessage());
+    }
+}
+```
+
+### How to add Additional DefaultBaseErrorCode
+You can make class or enum with implementing DefaultBaseErrorCode and methods `getHttpStatus(), getCode(), getMessage()`
+```java
+@Getter
+@AllArgsConstructor
+public enum TestErrorCode implements DefaultBaseErrorCode {
+    NOT_FOUND(HttpStatus.NOT_FOUND, "TEST404", "테스트 404 에러 발생")
+    ;
+
+    private final HttpStatus httpStatus;
+    private final String code;
+    private final String message;
+
+}
+```
+
+### In business logic
+
+```java
+@Service
+@RequiredArgsConstructor
+public class ArticleService {
+
+    private final ArticleRepository articleRepository;
+
+    @Transactional(readonly = true)
+    public Article findArticle(Long articleId) {
+        return articleRepository.findById(articleId).orElseThrow(() -> new ServerApplicationException(DefaultResponseErrorCode.NOT_FOUND));
     }
 }
 ```
@@ -53,46 +88,129 @@ public class TestController {
 ## Custom
 ### How to make your custom response
 
-You can make custom response by implementing BaseResponse, ErrorReasonDTO, SuccessReasonDTO, ResponseWriteUtil, ResponseWriter and ExceptionAdviceHandler
+You can make custom response by implementing BaseResponse, BaseErrorCode and FailureResponseWriter.
 
 1. Make custom BaseResponse
-2. Make custom ErrorReasonDTO, SuccessReasonDTO
-3. Make custom SuccessResponseWriter, FailureResponseWriter 
-4. Register your custom Handler, Writer in bean
+2. Make custom BaseErrorCode
+3. Make custom FailureResponseWriter 
+4. Register your custom Writer in bean and implement custom BaseErrorCode
 
-### how to add custom handler in ExceptionAdvice
+> Use BaseResponse to make frame of the response and expand the BaseErrorCode to define the data needed to generate the response as a method. Using the expanded BaseErrorCode, Implement the FailureResponseWriter which creates the response. Then, If you implement the Custom BaseErrorCode class and pass it to ServerApplicationException, the ExceptionAdvice can make Response and return it.
+
+### Example
+#### BaseResponse
+Let's assume that we implemented it as below.
+
 ```java
-    @Bean
-    ExceptionAdvice defaultExceptionAdviceConfigurer(
-                FailureResponseWriter failureResponseWriter, // Custom FailureResponseWriter
-                List<AdditionalExceptionHandler> additionalExceptionHandlers
-            ) {
-        return new ExceptionAdviceConfigurer(failureResponseWriter)
-            .withDefault(CustomErrorCode.ERROR, CustomErrorCode.BAD_ERROR) // register error code for 4xx, 5xx error
-            .addMissingPathVariable(CustomErrorCode.BAD_ERROR) // Register BaseErrorCode for MissingPathVariableException
-            .addAdditionalExceptionHandlers(additionalExceptionHandlers) // Register additional handler
-            .build();
+@Getter
+public class CustomResponse<T> implements BaseResponse { // you can use AbstractBaseResponse
+
+    private final HttpStatus httpStatus;
+    private final String message;
+    private final T result;
+
+    public CustomResponse(HttpStatus httpStatus, String message, T result) {
+        this.httpStatus = httpStatus;
+        this.message = message;
+        this.result = result;
     }
+
+    public static <T> CustomResponse<T> ok(T result) {
+        return new CustomResponse<>("성공", result);
+    }
+}
 ```
 
-## ExceptionAdvice Message sender
-You can configure message sender with properties and generator. If you don't implement Generator, it will be default.
-```YAML
-beginner:
-  api:
-    payload:
-      discord:
-        scope:
-          - Exception
-          - ServerApplicationException
-        web-hook-url: ${DISCORD_WEBHOOK_URL}
-        enable: false
-      slack:
-        enable: true
-        scope:
-          - ServerApplicationException
-        web-hook-url: ${SLACK_WEBHOOK_URL}
+#### BaseErrorCode
+You just implement the method needed to generate the response. (`HttpStatus` getter method is already exist in BaseErrorCode.)
 
+```java
+public interface CustomBaseErrorCode extends BaseErrorCode {
+    String getMessage();
+}
 ```
 
-If you add enable, scope, url, you can set it as you want. The reason for setting it as YML is to allow you to change scope, url, and enable without code modification.
+#### CustomResponseFailureWriter
+You implement `CustomResponseFailureWriter` to make CustomResponse with CustomBaseErrorCode
+
+```java
+@Component
+public class CustomFailureResponseWriter implements FailureResponseWriter<CustomBaseErrorCode> {
+
+    @Override
+    public BaseResponse onFailure(Exception e, CustomBaseErrorCode code) {
+        return new CustomResponse<>(code.getHttpStatus(), code.getMessage(), null);
+    }
+}
+```
+
+#### Error Code Class
+You can implement class with CustomBaseErrorCode to process error with it.
+
+```java
+import org.springframework.http.HttpStatus;
+
+@Getter
+@AllArgsConstructor
+public enum CustomErrorCode implements CustomBaseErrorCode {
+
+    ERROR(HttpStatus.BAD_REQUEST, "Error"),
+    BAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "BAD_ERROR"),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "Not found resource"),
+    // ...
+    ;
+
+    private final HttpStatus httpStatus;
+    private final String message;
+}
+```
+
+
+#### Config
+
+```java
+
+@Configuration
+public class ExceptionAdviceConfig {
+    @Bean
+    ExceptionAdvice<CustomBaseErrorCode> defaultExceptionAdviceConfigurer(
+            FailureResponseWriter<CustomBaseErrorCode> failureResponseWriter,
+            List<AdditionalExceptionHandler<CustomBaseErrorCode>> additionalExceptionHandlers
+    ) {
+        return new ExceptionAdviceConfigurer<>(failureResponseWriter)
+                .withDefault(CustomErrorCode.ERROR, CustomErrorCode.BAD_ERROR)
+                .addAdditionalExceptionHandlers(additionalExceptionHandlers)
+                .build();
+    }
+}
+```
+
+#### In business logic
+
+```java
+@Service
+@RequiredArgsConstructor
+public class ArticleService {
+
+    private final ArticleRepository articleRepository;
+
+    @Transactional(readonly = true)
+    public Article findArticle(Long articleId){
+        return articleRepository.findById(articleId).orElseThrow(() -> new ServerApplicationException(CustomErrorCode.NOT_FOUND));
+    }
+}
+```
+
+#### AdditionalExceptionHandler
+if you make and register it  by using `addAdditionalExceptionHandler` or `addAdditionalExceptionHandlers` method of configurer, It will operate asynchronously in the middle of error processing logic.
+```java
+@Slf4j
+@Component
+public class ExceptionAdviceLoggingHandler implements AdditionalExceptionHandler<CustomBaseErrorCode> {
+
+    @Override
+    public void doHandle(HttpServletRequest request, HttpServletResponse response, Exception e, CustomBaseErrorCode code) {
+        log.warn("Error occur: class: {}, message: {}", e.getClass(), code.getMessage());
+    }
+}
+```
