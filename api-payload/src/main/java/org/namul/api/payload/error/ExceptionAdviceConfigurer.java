@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * The class how ExceptionAdvice handles exception
@@ -26,6 +27,12 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
     private final Map<Class<? extends Exception>, T> errorCodeMap = new HashMap<>();
     private final FailureResponseWriter<T> failureResponseWriter;
     private final List<AdditionalExceptionHandler<T>> additionalExceptionHandlers = new ArrayList<>();
+    private Executor executor = null;
+
+    private static final int CORE_POOL_SIZE = 3;
+    private static final int MAXIMUM_POOL_SIZE = 15;
+    private static final int QUEUE_CAPACITY = 300;
+    private static final int KEEP_ALIVE_TIME_SECOND = 60;
 
     /**
      * The method for Default configuration it contains MethodArgumentNotValid, HttpMessageNotReadable, HttpRequestMethodNotSupported, MissingPathVariable, MissingServletRequestParameter, NoResourceFound, TypeMismatch, ServerApplication and Exception
@@ -159,11 +166,36 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
     }
 
     /**
+     * Sets the executor used to execute AdditionalExceptionHandlers asynchronously. They were already execute asynchronously, but you can customize executor that be used when it is executed asynchronously.
+     * @param executor The executor you want to use when CompletableFuture.runAsync is executed
+     */
+    public ExceptionAdviceConfigurer<T> setAdditionalExceptionHandlersExecutor(Executor executor) {
+        this.executor = executor;
+        return this;
+    }
+
+    /**
      * Build Exception Advice with configuration settings
      * @return The configured ExceptionAdvice
      */
     public ExceptionAdvice<T> build() {
+        if (this.executor == null) {
+            this.executor = createDefaultExecutor();
+        }
         return new ExceptionAdvice<>(this);
     }
 
+    /**
+     * Create default executor when you unset custom executor
+     */
+    private Executor createDefaultExecutor() {
+        return new ThreadPoolExecutor(
+                CORE_POOL_SIZE,
+                MAXIMUM_POOL_SIZE,
+                KEEP_ALIVE_TIME_SECOND, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(QUEUE_CAPACITY),
+                Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+    }
 }

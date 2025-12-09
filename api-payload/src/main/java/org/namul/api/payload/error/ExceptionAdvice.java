@@ -25,20 +25,13 @@ public class ExceptionAdvice<T extends BaseErrorCode> {
     private final FailureResponseWriter<T> failureResponseWriter;
     private final Map<Class<? extends Exception>, T> errorCodeMap;
     private final List<AdditionalExceptionHandler<T>> additionalExceptionHandlers;
-
-    private final Executor executor = new ThreadPoolExecutor(
-            10,
-            100,
-            60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(1000),
-            Executors.defaultThreadFactory(),
-            new ThreadPoolExecutor.CallerRunsPolicy()
-    );
+    private final Executor executor;
 
     public ExceptionAdvice(ExceptionAdviceConfigurer<T> exceptionAdviceConfigurer) {
         this.failureResponseWriter = exceptionAdviceConfigurer.getFailureResponseWriter();
         this.errorCodeMap = exceptionAdviceConfigurer.getErrorCodeMap();
         this.additionalExceptionHandlers = exceptionAdviceConfigurer.getAdditionalExceptionHandlers();
+        this.executor = exceptionAdviceConfigurer.getExecutor();
     }
 
     /**
