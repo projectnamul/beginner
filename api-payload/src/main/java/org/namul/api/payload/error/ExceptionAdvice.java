@@ -56,9 +56,11 @@ public class ExceptionAdvice<T extends BaseErrorCode> {
 
         if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
             T finalCode = code;
-            additionalExceptionHandlers.forEach(item ->
-                    CompletableFuture.runAsync(() -> item.doHandle(request, response, e, finalCode), executor)
-            );
+            additionalExceptionHandlers.stream()
+                    .filter(item -> item.supports(request, response, e, finalCode))
+                    .forEach(item ->
+                        CompletableFuture.runAsync(() -> item.doHandle(request, response, e, finalCode), executor)
+                    );
         }
         return serverResponse;
 
