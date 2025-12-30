@@ -1,4 +1,4 @@
-package org.namul.api.payload.response.supoorts;
+package org.namul.api.payload.response.supports;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
