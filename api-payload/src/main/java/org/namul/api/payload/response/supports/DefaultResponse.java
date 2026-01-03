@@ -48,7 +48,7 @@ public class DefaultResponse<T> extends AbstractBaseResponse<T> {
     }
 
     public static <T> DefaultResponse<T> noContent() {
-        return onSuccess(DefaultResponseSuccessCode.DELETED, null);
+        return onSuccess(DefaultResponseSuccessCode.NO_CONTENT, null);
     }
 
     public static <T> DefaultResponse<T> onSuccess(DefaultBaseSuccessCode code, T result) {

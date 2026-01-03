@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 public enum DefaultResponseSuccessCode implements DefaultBaseSuccessCode {
     OK(HttpStatus.OK, "COMMON200", "The request was successfully processed."),
     CREATED(HttpStatus.CREATED, "COMMON201", "The resource was successfully created."),
-    DELETED(HttpStatus.NO_CONTENT, "COMMON204", "he request was successfully processed, and there is no content to return."),
+    NO_CONTENT(HttpStatus.NO_CONTENT, "COMMON204", "The request was successfully processed, and there is no content to return."),
     ;
 
     private final HttpStatus httpStatus;
