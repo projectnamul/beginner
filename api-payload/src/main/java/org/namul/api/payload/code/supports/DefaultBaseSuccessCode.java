@@ -1,6 +1,8 @@
 package org.namul.api.payload.code.supports;
 
-public interface DefaultBaseSuccessCode {
+import org.namul.api.payload.code.BaseSuccessCode;
+
+public interface DefaultBaseSuccessCode extends BaseSuccessCode {
 
     String getCode();
     String getMessage();
