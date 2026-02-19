@@ -1,14 +1,12 @@
 package org.namul.api.payload.error;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.namul.api.payload.code.BaseErrorCode;
 import org.namul.api.payload.error.exception.ServerApplicationException;
 import org.namul.api.payload.response.BaseResponse;
+import org.namul.api.payload.web.WebRequestWrapper;
+import org.namul.api.payload.web.WebResponseWrapper;
 import org.namul.api.payload.writer.FailureResponseWriter;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 import java.util.Map;
@@ -19,30 +17,44 @@ import java.util.concurrent.*;
  * @param <T> The interface implementing BaseErrorCode which have method to make response
  */
 @Slf4j
-@RestControllerAdvice
-public class ExceptionAdvice<T extends BaseErrorCode> {
+public class ErrorCodeExceptionHandler<T extends BaseErrorCode> {
 
     private final FailureResponseWriter<T> failureResponseWriter;
-    private final Map<Class<? extends Exception>, T> errorCodeMap;
+    private final Map<Class<? extends Throwable>, T> errorCodeMap;
     private final List<AdditionalExceptionHandler<T>> additionalExceptionHandlers;
     private final Executor executor;
 
-    public ExceptionAdvice(ExceptionAdviceConfigurer<T> exceptionAdviceConfigurer) {
-        this.failureResponseWriter = exceptionAdviceConfigurer.getFailureResponseWriter();
-        this.errorCodeMap = exceptionAdviceConfigurer.getErrorCodeMap();
-        this.additionalExceptionHandlers = exceptionAdviceConfigurer.getAdditionalExceptionHandlers();
-        this.executor = exceptionAdviceConfigurer.getExecutor();
+    public ErrorCodeExceptionHandler(ErrorCodeExceptionHandlerConfigurer<T> errorCodeExceptionHandlerConfigurer) {
+        this.failureResponseWriter = errorCodeExceptionHandlerConfigurer.getFailureResponseWriter();
+        this.errorCodeMap = errorCodeExceptionHandlerConfigurer.getErrorCodeMap();
+        this.additionalExceptionHandlers = errorCodeExceptionHandlerConfigurer.getAdditionalExceptionHandlers();
+        this.executor = errorCodeExceptionHandlerConfigurer.getExecutor();
     }
 
     /**
      * Handle method when exception occurs
-     * @param e The Exception type
+     * @param t The Exception type
      * @return The Response value after handling exception
      */
-    @ExceptionHandler
-    public BaseResponse handle(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        T code;
+    public BaseResponse handle(WebRequestWrapper requestWrapper, WebResponseWrapper responseWrapper, Throwable t) {
+        T code = getCode(t);
         BaseResponse serverResponse;
+        serverResponse = handleDelegated(t, code);
+
+        if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
+            T finalCode = code;
+            additionalExceptionHandlers.stream()
+                    .filter(item -> item.supports(requestWrapper, responseWrapper, t, finalCode))
+                    .forEach(item ->
+                        CompletableFuture.runAsync(() -> item.doHandle(requestWrapper, responseWrapper, t, finalCode), executor)
+                    );
+        }
+        return serverResponse;
+
+    }
+
+    public T getCode(Throwable e) {
+        T code;
         if (e instanceof ServerApplicationException) {
             code = handleServerApplicationException((ServerApplicationException) e);
             if (code == null) {
@@ -52,18 +64,7 @@ public class ExceptionAdvice<T extends BaseErrorCode> {
         else {
             code = handleGeneralException(e);
         }
-        serverResponse = handleDelegated(e, response, code);
-
-        if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
-            T finalCode = code;
-            additionalExceptionHandlers.stream()
-                    .filter(item -> item.supports(request, response, e, finalCode))
-                    .forEach(item ->
-                        CompletableFuture.runAsync(() -> item.doHandle(request, response, e, finalCode), executor)
-                    );
-        }
-        return serverResponse;
-
+        return code;
     }
 
     /**
@@ -94,11 +95,11 @@ public class ExceptionAdvice<T extends BaseErrorCode> {
 
     /**
      * Get BaseErrorCode when exception occurs
-     * @param e The info of exception
+     * @param t The info of exception
      * @return The BaseErrorCode to create response
      */
-    private T handleGeneralException(Exception e) {
-        T code = this.findCode(e.getClass());
+    private T handleGeneralException(Throwable t) {
+        T code = this.findCode(t.getClass());
         if (code == null) {
             throw new IllegalArgumentException("The appropriate handler was not found.");
         }
@@ -107,26 +108,24 @@ public class ExceptionAdvice<T extends BaseErrorCode> {
 
     /**
      * Create BaseResponse with handler and errorReasonDTO
-     * @param e The exception class
-     * @param response The HttpServletResponse
+     * @param t The exception class
      * @param code The data to process error response logic
      * @return The created response
      */
-    private BaseResponse handleDelegated(Exception e,HttpServletResponse response, T code) {
-        response.setStatus(code.getHttpStatus().value());
-        return failureResponseWriter.onFailure(e, code);
+    private BaseResponse handleDelegated(Throwable t, T code) {
+        return failureResponseWriter.onFailure(t, code);
     }
 
 
     /**
      * Find BaseErrorCode in map repository, First, find exception class in map. if handler about exception class is not found, find handler about super class.
      * Last handler about Exception class is return. if handler about exception class didn't exist, it will return null
-     * @param exceptionClass The exception class occurs
+     * @param throwableClass The exception class occurs
      * @return BaseErrorCode to be used for response generation
      */
-    public T findCode(Class<? extends Exception> exceptionClass) {
-        Class<?> current = exceptionClass;
-        while (current != null && Exception.class.isAssignableFrom(current)) {
+    private T findCode(Class<? extends Throwable> throwableClass) {
+        Class<?> current = throwableClass;
+        while (current != null && Throwable.class.isAssignableFrom(current)) {
             T code= this.errorCodeMap.get(current);
             if (code != null) {
                 return code;

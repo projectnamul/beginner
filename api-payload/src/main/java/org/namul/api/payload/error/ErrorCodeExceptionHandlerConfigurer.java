@@ -22,9 +22,9 @@ import java.util.concurrent.*;
  */
 @Getter
 @RequiredArgsConstructor
-public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
+public class ErrorCodeExceptionHandlerConfigurer<T extends BaseErrorCode> {
 
-    private final Map<Class<? extends Exception>, T> errorCodeMap = new HashMap<>();
+    private final Map<Class<? extends Throwable>, T> errorCodeMap = new HashMap<>();
     private final FailureResponseWriter<T> failureResponseWriter;
     private final List<AdditionalExceptionHandler<T>> additionalExceptionHandlers = new ArrayList<>();
     private Executor executor = null;
@@ -40,8 +40,8 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * @param badRequestError The BaseErrorCode that can return ErrorReasonDTO for bad request error
      * @param internalServerError The BaseErrorCode that can return ErrorReasonDTO for internal server error
      */
-    public ExceptionAdviceConfigurer<T> withDefault(T badRequestError,
-                                                    T internalServerError) {
+    public ErrorCodeExceptionHandlerConfigurer<T> withDefault(T badRequestError,
+                                                              T internalServerError) {
         return this
                 .addMethodArgumentNotValid(badRequestError)
                 .addHttpMessageNotReadable(badRequestError)
@@ -58,7 +58,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * Add AdditionalExceptionHandler in ExceptionAdvice
      * @param additionalExceptionHandler The Handler for additional function
      */
-    public ExceptionAdviceConfigurer<T> addAdditionalExceptionHandler(AdditionalExceptionHandler<T> additionalExceptionHandler) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addAdditionalExceptionHandler(AdditionalExceptionHandler<T> additionalExceptionHandler) {
         this.additionalExceptionHandlers.add(additionalExceptionHandler);
         return this;
     }
@@ -67,7 +67,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * Add AdditionalExceptionHandler in ExceptionAdvice
      * @param additionalExceptionHandlers The Handlers for additional function
      */
-    public ExceptionAdviceConfigurer<T> addAdditionalExceptionHandlers(List<AdditionalExceptionHandler<T>> additionalExceptionHandlers) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addAdditionalExceptionHandlers(List<AdditionalExceptionHandler<T>> additionalExceptionHandlers) {
         this.additionalExceptionHandlers.addAll(additionalExceptionHandlers);
         return this;
     }
@@ -76,7 +76,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about MethodArgumentNotValidException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addMethodArgumentNotValid(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addMethodArgumentNotValid(T code) {
         return this.addAdvice(MethodArgumentNotValidException.class, code);
     }
 
@@ -84,7 +84,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about HttpMessageNotReadableException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addHttpMessageNotReadable(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addHttpMessageNotReadable(T code) {
         return this.addAdvice(HttpMessageNotReadableException.class, code);
     }
 
@@ -92,7 +92,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about HttpRequestMethodNotSupported
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addHttpRequestMethodNotSupported(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addHttpRequestMethodNotSupported(T code) {
         return this.addAdvice(HttpRequestMethodNotSupportedException.class, code);
     }
 
@@ -100,7 +100,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about MissingPathVariableException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addMissingPathVariable(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addMissingPathVariable(T code) {
         return this.addAdvice(MissingPathVariableException.class, code);
     }
 
@@ -108,7 +108,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about MissingServletRequestParameterException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addMissingServletRequestParameter(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addMissingServletRequestParameter(T code) {
         return this.addAdvice(MissingServletRequestParameterException.class, code);
     }
 
@@ -116,7 +116,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about NoResourceFoundException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addNoResourceFound(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addNoResourceFound(T code) {
         return this.addAdvice(NoResourceFoundException.class, code);
     }
 
@@ -124,7 +124,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about TypeMismatchException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addTypeMismatch(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addTypeMismatch(T code) {
         return this.addAdvice(TypeMismatchException.class, code);
     }
 
@@ -132,7 +132,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about ServerApplicationException
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addServerApplication(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addServerApplication(T code) {
         return this.addAdvice(ServerApplicationException.class, code);
     }
 
@@ -140,7 +140,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * The method that add ErrorReasonDTO with default handler about Exception
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      */
-    public ExceptionAdviceConfigurer<T> addGlobalException(T code) {
+    public ErrorCodeExceptionHandlerConfigurer<T> addGlobalException(T code) {
         return this.addAdvice(Exception.class, code);
     }
 
@@ -150,7 +150,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
      * @param <E> The exception type
      */
-    public <E extends Exception> ExceptionAdviceConfigurer<T> addAdvice(Class<E> cls, T code) {
+    public <E extends Throwable> ErrorCodeExceptionHandlerConfigurer<T> addAdvice(Class<E> cls, T code) {
         this.errorCodeMap.put(cls, code);
         return this;
     }
@@ -160,7 +160,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * @param cls The exception class is handled by handler
      * @param <E> The exception type
      */
-    public <E extends Exception> ExceptionAdviceConfigurer<T> deleteAdvice(Class<E> cls) {
+    public <E extends Throwable> ErrorCodeExceptionHandlerConfigurer<T> deleteAdvice(Class<E> cls) {
         this.errorCodeMap.remove(cls);
         return this;
     }
@@ -169,7 +169,7 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * Sets the executor used to execute AdditionalExceptionHandlers asynchronously. They were already execute asynchronously, but you can customize executor that be used when it is executed asynchronously.
      * @param executor The executor you want to use when CompletableFuture.runAsync is executed
      */
-    public ExceptionAdviceConfigurer<T> setAdditionalExceptionHandlersExecutor(Executor executor) {
+    public ErrorCodeExceptionHandlerConfigurer<T> setAdditionalExceptionHandlersExecutor(Executor executor) {
         this.executor = executor;
         return this;
     }
@@ -178,11 +178,11 @@ public class ExceptionAdviceConfigurer<T extends BaseErrorCode> {
      * Build Exception Advice with configuration settings
      * @return The configured ExceptionAdvice
      */
-    public ExceptionAdvice<T> build() {
+    public ErrorCodeExceptionHandler<T> build() {
         if (this.executor == null) {
             this.executor = createDefaultExecutor();
         }
-        return new ExceptionAdvice<>(this);
+        return new ErrorCodeExceptionHandler<>(this);
     }
 
     /**
