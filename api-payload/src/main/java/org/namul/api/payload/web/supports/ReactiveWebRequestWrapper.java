@@ -17,7 +17,7 @@ public class ReactiveWebRequestWrapper implements WebRequestWrapper {
 
     @Override
     public String getRequestURI() {
-        return serverWebExchange.getRequest().getURI().toString();
+        return serverWebExchange.getRequest().getPath().toString();
     }
 
     @Override
