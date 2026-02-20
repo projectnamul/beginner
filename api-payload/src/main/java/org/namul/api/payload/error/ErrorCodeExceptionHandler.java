@@ -32,7 +32,7 @@ public class ErrorCodeExceptionHandler<T extends BaseErrorCode> {
     }
 
     /**
-     * Handle method when exception occurs
+     * The method that create response when exception occurs. You must modify all information about requests and responses before using them. This is because the AdditionalExceptionHandler in this class runs asynchronously. Therefore, if you put requests and responses before you modify them, you may experience consistency issues.
      * @param t The Exception type
      * @return The Response value after handling exception
      */
@@ -42,11 +42,10 @@ public class ErrorCodeExceptionHandler<T extends BaseErrorCode> {
         serverResponse = handleDelegated(t, code);
 
         if (additionalExceptionHandlers != null && !additionalExceptionHandlers.isEmpty()) {
-            T finalCode = code;
             additionalExceptionHandlers.stream()
-                    .filter(item -> item.supports(requestWrapper, responseWrapper, t, finalCode))
+                    .filter(item -> item.supports(requestWrapper, responseWrapper, t, code))
                     .forEach(item ->
-                        CompletableFuture.runAsync(() -> item.doHandle(requestWrapper, responseWrapper, t, finalCode), executor)
+                        CompletableFuture.runAsync(() -> item.doHandle(requestWrapper, responseWrapper, t, code), executor)
                     );
         }
         return serverResponse;
