@@ -13,7 +13,7 @@ public interface AdditionalExceptionHandler<T extends BaseErrorCode> {
 
     /**
      * Method that determine whether to execute additional methods
-     * @param t The exception data when logic that creates error response run
+     * @param t The throwable data when logic that creates error response run
      * @param code The BaseErrorCode when logic that creates error response run
      * @return True or False, If it returns true, additional logic will be executed. If it returns false, additional logic won't be executed.
      */
@@ -23,7 +23,7 @@ public interface AdditionalExceptionHandler<T extends BaseErrorCode> {
 
     /**
      * Additional logic executed in ExceptionAdvice when an error occurs
-     * @param t The exception data when logic that creates error response run
+     * @param t The throwable data when logic that creates error response run
      * @param code The BaseErrorCode when logic that creates error response run
      */
     void doHandle(WebRequestWrapper request, WebResponseWrapper response, Throwable t, T code);

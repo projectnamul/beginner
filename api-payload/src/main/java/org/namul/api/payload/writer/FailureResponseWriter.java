@@ -13,7 +13,7 @@ public interface FailureResponseWriter<T extends BaseErrorCode> {
     /**
      * Make failure response.
      * @param error The data about how to fail
-     * @param t Exception data
+     * @param t The throwable data
      * @return The generated return value
      */
     BaseResponse onFailure(Throwable t, T error);
