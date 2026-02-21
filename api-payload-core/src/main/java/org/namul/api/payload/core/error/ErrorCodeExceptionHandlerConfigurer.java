@@ -5,13 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.namul.api.payload.core.code.BaseErrorCode;
 import org.namul.api.payload.core.error.exception.ServerApplicationException;
 import org.namul.api.payload.core.writer.FailureResponseWriter;
-import org.springframework.beans.TypeMismatchException;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingPathVariableException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -35,26 +28,6 @@ public class ErrorCodeExceptionHandlerConfigurer<T extends BaseErrorCode> {
     private static final int KEEP_ALIVE_TIME_SECOND = 60;
 
     /**
-     * The method for Default configuration it contains MethodArgumentNotValid, HttpMessageNotReadable, HttpRequestMethodNotSupported, MissingPathVariable, MissingServletRequestParameter, NoResourceFound, TypeMismatch, ServerApplication and Exception
-     * it set Exception to have internalServerErrorCode and other Exceptions to have badRequestError
-     * @param badRequestError The BaseErrorCode that can return ErrorReasonDTO for bad request error
-     * @param internalServerError The BaseErrorCode that can return ErrorReasonDTO for internal server error
-     */
-    public ErrorCodeExceptionHandlerConfigurer<T> withDefault(T badRequestError,
-                                                              T internalServerError) {
-        return this
-                .addMethodArgumentNotValid(badRequestError)
-                .addHttpMessageNotReadable(badRequestError)
-                .addHttpRequestMethodNotSupported(badRequestError)
-                .addMissingPathVariable(badRequestError)
-                .addMissingServletRequestParameter(badRequestError)
-                .addNoResourceFound(badRequestError)
-                .addTypeMismatch(badRequestError)
-                .addServerApplication(badRequestError)
-                .addGlobalException(internalServerError);
-    }
-
-    /**
      * Add AdditionalExceptionHandler in ExceptionAdvice
      * @param additionalExceptionHandler The Handler for additional function
      */
@@ -70,62 +43,6 @@ public class ErrorCodeExceptionHandlerConfigurer<T extends BaseErrorCode> {
     public ErrorCodeExceptionHandlerConfigurer<T> addAdditionalExceptionHandlers(List<AdditionalExceptionHandler<T>> additionalExceptionHandlers) {
         this.additionalExceptionHandlers.addAll(additionalExceptionHandlers);
         return this;
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about MethodArgumentNotValidException
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ErrorCodeExceptionHandlerConfigurer<T> addMethodArgumentNotValid(T code) {
-        return this.addAdvice(MethodArgumentNotValidException.class, code);
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about HttpMessageNotReadableException
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ErrorCodeExceptionHandlerConfigurer<T> addHttpMessageNotReadable(T code) {
-        return this.addAdvice(HttpMessageNotReadableException.class, code);
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about HttpRequestMethodNotSupported
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ErrorCodeExceptionHandlerConfigurer<T> addHttpRequestMethodNotSupported(T code) {
-        return this.addAdvice(HttpRequestMethodNotSupportedException.class, code);
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about MissingPathVariableException
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ErrorCodeExceptionHandlerConfigurer<T> addMissingPathVariable(T code) {
-        return this.addAdvice(MissingPathVariableException.class, code);
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about MissingServletRequestParameterException
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ErrorCodeExceptionHandlerConfigurer<T> addMissingServletRequestParameter(T code) {
-        return this.addAdvice(MissingServletRequestParameterException.class, code);
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about NoResourceFoundException
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ErrorCodeExceptionHandlerConfigurer<T> addNoResourceFound(T code) {
-        return this.addAdvice(NoResourceFoundException.class, code);
-    }
-
-    /**
-     * The method that add ErrorReasonDTO with default handler about TypeMismatchException
-     * @param code The BaseErrorCode which return ErrorReasonDTO that will be written in response
-     */
-    public ErrorCodeExceptionHandlerConfigurer<T> addTypeMismatch(T code) {
-        return this.addAdvice(TypeMismatchException.class, code);
     }
 
     /**
