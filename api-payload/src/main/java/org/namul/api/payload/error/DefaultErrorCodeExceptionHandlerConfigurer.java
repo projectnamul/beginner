@@ -4,9 +4,9 @@ import org.namul.api.payload.code.supports.DefaultBaseErrorCode;
 import org.namul.api.payload.code.supports.DefaultResponseErrorCode;
 import org.namul.api.payload.writer.FailureResponseWriter;
 
-public class DefaultExceptionAdviceConfigurer extends ExceptionAdviceConfigurer<DefaultBaseErrorCode> {
+public class DefaultErrorCodeExceptionHandlerConfigurer extends ErrorCodeExceptionHandlerConfigurer<DefaultBaseErrorCode> {
 
-    public DefaultExceptionAdviceConfigurer(FailureResponseWriter<DefaultBaseErrorCode> failureResponseWriter) {
+    public DefaultErrorCodeExceptionHandlerConfigurer(FailureResponseWriter<DefaultBaseErrorCode> failureResponseWriter) {
         super(failureResponseWriter);
         super
                 .addMethodArgumentNotValid(DefaultResponseErrorCode.METHOD_ARGUMENT_NOT_VALID)

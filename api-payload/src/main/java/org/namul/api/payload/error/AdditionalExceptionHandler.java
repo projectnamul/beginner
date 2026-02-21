@@ -1,8 +1,8 @@
 package org.namul.api.payload.error;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.namul.api.payload.code.BaseErrorCode;
+import org.namul.api.payload.web.WebRequestWrapper;
+import org.namul.api.payload.web.WebResponseWrapper;
 
 /**
  * The additional handler add sub logic when ExceptionAdvice handle exception. This logic doesn't affect to creating response logic. So, handlers will be executed with CompletableFuture.runAsync() in ExceptionAdvice.
@@ -13,18 +13,18 @@ public interface AdditionalExceptionHandler<T extends BaseErrorCode> {
 
     /**
      * Method that determine whether to execute additional methods
-     * @param e The exception data when logic that creates error response run
+     * @param t The throwable data when logic that creates error response run
      * @param code The BaseErrorCode when logic that creates error response run
      * @return True or False, If it returns true, additional logic will be executed. If it returns false, additional logic won't be executed.
      */
-    default boolean supports(HttpServletRequest request, HttpServletResponse response, Exception e, T code) {
+    default boolean supports(WebRequestWrapper request, WebResponseWrapper response, Throwable t, T code) {
         return true;
     }
 
     /**
      * Additional logic executed in ExceptionAdvice when an error occurs
-     * @param e The exception data when logic that creates error response run
+     * @param t The throwable data when logic that creates error response run
      * @param code The BaseErrorCode when logic that creates error response run
      */
-    void doHandle(HttpServletRequest request, HttpServletResponse response, Exception e, T code);
+    void doHandle(WebRequestWrapper request, WebResponseWrapper response, Throwable t, T code);
 }

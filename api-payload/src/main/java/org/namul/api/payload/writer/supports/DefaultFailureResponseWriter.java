@@ -8,7 +8,7 @@ import org.namul.api.payload.writer.FailureResponseWriter;
 public class DefaultFailureResponseWriter implements FailureResponseWriter<DefaultBaseErrorCode> {
 
     @Override
-    public BaseResponse onFailure(Exception e, DefaultBaseErrorCode error) {
-        return new DefaultResponse<>(false, error.getCode(), error.getMessage(), e == null ? null : e.getMessage());
+    public BaseResponse onFailure(Throwable t, DefaultBaseErrorCode error) {
+        return new DefaultResponse<>(false, error.getCode(), error.getMessage(), t == null ? null : t.getMessage());
     }
 }
