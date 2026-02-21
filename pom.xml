@@ -14,7 +14,7 @@
   <name>Beginner mvn parent</name>
   <url>https://github.com/projectnamul/beginner</url>
   <modules>
-    <module>api-payload</module>
+    <module>api-payload-core</module>
   </modules>
 
   <licenses>
