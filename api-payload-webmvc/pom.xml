@@ -9,9 +9,9 @@
         <version>0.9.1</version>
     </parent>
 
-    <artifactId>api-payload-core</artifactId>
-    <name>api-payload-core</name>
-    <description>This module offers only core classes for handling exception and creating response when exception occurs.</description>
+    <artifactId>api-payload-webmvc</artifactId>
+    <name>api-payload-webmvc</name>
+    <description>This module offers api-payload classes which can run in Spring MVC environment. It doesn't contain api-payload-core module. So, You must add api-payload-core module with same version in your project.</description>
     <url>https://github.com/projectnamul/beginner</url>
 
     <licenses>
@@ -42,16 +42,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -59,24 +51,13 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <artifactId>spring-webmvc</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.namul</groupId>
+            <artifactId>api-payload-core</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 </project>
