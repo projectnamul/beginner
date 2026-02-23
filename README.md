@@ -8,6 +8,6 @@ Dependency Development Repository for Spring Beginners
 ![Java version](https://img.shields.io/badge/Java%20version-17-orange)
 
 ## Package
-- ### [Api-Payload](https://github.com/projectnamul/beginner/tree/develop/api-payload)
-    Dependency for Unified response and error handler settings that will use at initial project settings
+- ### [api-payload-core](https://github.com/projectnamul/beginner/tree/develop/api-payload-core)
+  This module offer Error Handling module to make unified response about several exceptions.
 
