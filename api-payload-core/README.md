@@ -1,4 +1,4 @@
-# Api Payload
+# api-payload-core
 You can make and use class to make response about several exceptions.
 
 ---
@@ -42,6 +42,7 @@ Descriptions of classes and Interfaces
 ### ServerApplicationException
 - This class is just exception class that contain BaseErrorCode. Developer can make another exception class by extending it. Also, It can get cause(Throwable) for stacktrace 
 
+---
 
 ## How to use
 ### Default
@@ -154,6 +155,8 @@ public class ArticleService {
     }
 }
 ```
+
+---
 
 ## Custom
 ### How to make your custom response
