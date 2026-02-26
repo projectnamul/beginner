@@ -1,6 +1,5 @@
 package org.namul.api.payload.core.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,6 @@ import lombok.Setter;
 @Setter
 public abstract class AbstractBaseResponse<T> implements BaseResponse {
 
-    @JsonProperty("result")
     private T result;
 
     protected AbstractBaseResponse(T result) {
