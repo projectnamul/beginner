@@ -1,11 +1,11 @@
-package org.namul.api.payload.core.config;
+package org.namul.api.payload.webmvc.starter.config;
 
 import org.namul.api.payload.core.code.supports.DefaultBaseErrorCode;
 import org.namul.api.payload.core.code.supports.DefaultBaseSuccessCode;
 import org.namul.api.payload.core.writer.FailureResponseWriter;
 import org.namul.api.payload.core.writer.SuccessResponseWriter;
-import org.namul.api.payload.core.writer.supports.DefaultSuccessResponseWriter;
 import org.namul.api.payload.core.writer.supports.DefaultFailureResponseWriter;
+import org.namul.api.payload.core.writer.supports.DefaultSuccessResponseWriter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
