@@ -1,8 +1,5 @@
 package org.namul.api.payload.core.response.supports;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import lombok.Setter;
 import org.namul.api.payload.core.code.supports.DefaultBaseSuccessCode;
@@ -15,14 +12,10 @@ import org.namul.api.payload.core.response.AbstractBaseResponse;
  */
 @Getter
 @Setter
-@JsonPropertyOrder({"isSuccess", "code", "message", "result"})
 public class DefaultResponse<T> extends AbstractBaseResponse<T> {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String code;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String message;
-    @JsonProperty("isSuccess")
     private Boolean isSuccess;
 
     public DefaultResponse() {

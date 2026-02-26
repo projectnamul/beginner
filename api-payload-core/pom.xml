@@ -11,7 +11,8 @@
 
     <artifactId>api-payload-core</artifactId>
     <name>api-payload-core</name>
-    <description>This module offers only core classes for handling exception and creating response when exception occurs.</description>
+    <description>Core engine for standardized API responses and exception handling.
+        Provides the foundational interfaces and model classes used across all Beginner modules.</description>
     <url>https://github.com/projectnamul/beginner</url>
 
     <licenses>
@@ -44,15 +45,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
@@ -70,11 +62,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
