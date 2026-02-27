@@ -1,18 +1,65 @@
 # api-payload-webmvc
 
-It is a dependency that helps users easily use functions in a Spring MVC environment by using it as 'api-payload-core'.
+**Spring WebMVC Implementation for Standardized API Payloads**
+
+This module provides the practical implementation of `api-payload-core` specifically for the **Spring WebMVC** environment. It includes wrappers for Servlet-based requests/responses and automated advice for global exception handling.
+
+---
+
+## 🛠️ Key Classes & Components
+
+### 1. HttpServlet Wrapper Classes
+These classes bridge the gap between standard Java Servlet APIs and the framework's internal logic.
+* **`HttpServletWebRequestWrapper`**: Implements `WebRequestWrapper` using `HttpServletRequest`. It provides a unified way to access request metadata (Headers, URI, Method, etc.) without direct dependency on the Servlet API.
+* **`HttpServletWebResponseWrapper`**: Implements `WebResponseWrapper` using `HttpServletResponse`, allowing the framework to write standardized payloads directly to the HTTP response body.
+
+### 2. HttpServletErrorCodeExceptionHandlerConfigurer
+A specialized implementation of `ErrorCodeExceptionHandlerConfigurer`.
+* It simplifies the registration of common errors that typically occur within the **Dispatcher Servlet** environment.
+* It provides a fluent API to map various exception types to their corresponding `BaseErrorCode` definitions.
+
+### 3. ExceptionRestControllerAdvice
+A pre-implemented `@RestControllerAdvice` that serves as the global interceptor for exceptions.
+* **Plug-and-Play**: Once registered as a Bean (automatically handled by the Starter), it catches all unhandled exceptions and converts them into standardized JSON payloads.
+* **Extensible**: If you need custom behavior, you can easily extend this class and override its methods.
+
+---
+
+## 💡 Advanced Usage
 
 
-## Classes
 
-### HttpServletWebRequestWrapper
-- A class that implements WebRequestWrapper's method using HttpServletRequest. It makes it easy to change and use HttpServletRequestWrapper to WebRequestWrapper through a constructor or static method.
+### Customizing the Exception Handler
+You can use the `HttpServlet` specific configurer to define how different exceptions should be mapped:
 
-### HttpServletWebResponseWrapper
-- A class that implements WebResponseWrapper's method using HttpServletResponse. It makes it easy to change and use HttpServletResponse to WebResponseWrapper through a constructor or static method.
+```java
+@Configuration
+public class WebExceptionConfig {
 
-### HttpServletErrorCodeExceptionHandlerConfigurer
-- This class implements the ErrorCodeExceptionHandlerConfigurer, which supports methods that make it easy to add errors that usually occur in the Dispatcher Servlet environment.
+    @Bean
+    public ErrorCodeExceptionHandler<DefaultBaseErrorCode> errorCodeExceptionHandler(
+            FailureResponseWriter<DefaultBaseErrorCode> failureWriter,
+            List<AdditionalExceptionHandler<DefaultBaseErrorCode>> handlers
+    ) {
+        // Specifically designed for Spring WebMVC environment
+        return new HttpServletErrorCodeExceptionHandlerConfigurer<>(failureWriter)
+                .addServerApplication(DefaultResponseErrorCode.BAD_REQUEST)
+                .addGlobalException(DefaultResponseErrorCode.INTERNAL_SERVER_ERROR)
+                .addAdditionalExceptionHandlers(handlers)
+                .build();
+    }
+}
+```
+---
+## ⚠️ Recommendation: Use Starter
+While you can manually register these beans, it is highly recommended to use the [api-payload-webmvc-starter](https://github.com/projectnamul/beginner/tree/develop/api-payload-webmvc-starter) module. The Starter automatically handles the registration of writers and exception advice, allowing you to focus on business logic with zero manual configuration.
 
-### ExceptionRestControllerAdvice
-- RestControllerAdvice is a class implemented using ErrorCodeExceptionHandler that helps developers add it through Bean rather than directly. If it needs to be modified, you can override it. Of course, you can implement it yourself without using it.
+---
+
+## 🔗 Related Modules
+- api-payload-core: Foundation interfaces and core engine.
+
+- api-payload-webmvc-starter: Auto-configuration for instant integration.
+
+---
+© 2026 [Project Namul - Beginner](https://github.com/projectnamul/beginner)
