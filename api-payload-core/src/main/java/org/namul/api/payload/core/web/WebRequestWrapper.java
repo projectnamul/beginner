@@ -3,52 +3,56 @@ package org.namul.api.payload.core.web;
 import java.util.Optional;
 
 /**
- * The class which returns web request info for use by internal logic
+ * A technology-agnostic wrapper for retrieving metadata from an incoming web request.
+ * <p>
+ * This interface abstracts the underlying request implementation (e.g., HttpServletRequest,
+ * ServerHttpRequest), allowing internal logic to access request details without
+ * direct dependency on a specific web framework.
  */
 public interface WebRequestWrapper {
 
     /**
-     * The method returns RequestURI (except scheme, host name, port only endpoint)
-     * @return The endpoint of request
+     * Returns the request URI path, excluding the scheme, host name, and port.
+     * * @return the request endpoint (e.g., "/api/v1/articles").
      */
     String getRequestURI();
 
     /**
-     * The method returns HttpMethod of Request
-     * @return HttpMethod (GET, POST, PUT, PATCH, DELETE, OPTIONS, TRACE, HEAD)
+     * Returns the HTTP method of the request.
+     * * @return the HTTP method string (e.g., GET, POST, PUT, DELETE).
      */
     String getMethod();
 
     /**
-     * The method returns header value
-     * @param header The header name that you want to find
-     * @return If header exists, returns header value. If not, return null
+     * Retrieves the value of the specified request header.
+     * * @param header the name of the header to retrieve.
+     * @return the header value if present; {@code null} otherwise.
      */
     String getHeader(String header);
 
     /**
-     * The method returns parameter value
-     * @param parameter The parameter name that you want to find
-     * @return If parameter exists, returns parameter value. If not, return null
+     * Retrieves the value of a specific request parameter.
+     * * @param parameter the name of the parameter to retrieve.
+     * @return the parameter value if present; {@code null} otherwise.
      */
     String getParameter(String parameter);
 
     /**
-     * The method returns Cookie value
-     * @param name The cookie name that you want to find
-     * @return If cookie exists, returns cookie value. If not, return null
+     * Retrieves the value of a specific cookie by its name.
+     * * @param name the name of the cookie to retrieve.
+     * @return the cookie value if present; {@code null} otherwise.
      */
     String getCookie(String name);
 
     /**
-     * The method returns remote address
-     * @return Optional cookie value. So, it can be null when not found in the request
+     * Returns the remote IP address of the client that sent the request.
+     * * @return an {@link Optional} containing the remote address, or empty if unavailable.
      */
     Optional<String> getRemoteAddress();
 
     /**
-     * The method returns user agent
-     * @return Optional user agent value. So, it can be null when not found in the request
+     * Returns the 'User-Agent' header value from the request.
+     * * @return an {@link Optional} containing the user agent string, or empty if not found.
      */
     Optional<String> getUserAgent();
 }
