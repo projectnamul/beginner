@@ -13,8 +13,14 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 /**
- * The class for Error handling when error occurs.
- * @param <T> The interface implementing BaseErrorCode which have method to make response
+ * The central engine responsible for intercepting exceptions and generating standardized responses.
+ * <p>
+ * This class coordinates the error handling flow by mapping caught exceptions to their
+ * corresponding {@link BaseErrorCode}, invoking the {@link FailureResponseWriter} for
+ * response construction, and triggering any registered {@link AdditionalExceptionHandler}s
+ * for asynchronous side effects.
+ *
+ * @param <T> A type that implements {@link BaseErrorCode}, used to define the error structure.
  */
 @Slf4j
 public class ErrorCodeExceptionHandler<T extends BaseErrorCode> {
@@ -32,9 +38,19 @@ public class ErrorCodeExceptionHandler<T extends BaseErrorCode> {
     }
 
     /**
-     * The method that create response when exception occurs. You must modify all information about requests and responses before using them. This is because the AdditionalExceptionHandler in this class runs asynchronously. Therefore, if you put requests and responses before you modify them, you may experience consistency issues.
-     * @param t The Exception type
-     * @return The Response value after handling exception
+     * Processes an exception and constructs the final API response.
+     * <p>
+     * <b>Important Consistency Warning:</b> Since {@link AdditionalExceptionHandler}s are
+     * executed asynchronously using {@code CompletableFuture.runAsync()}, any mutable
+     * information within the {@code WebRequestWrapper} or {@code WebResponseWrapper}
+     * must be finalized or safely copied before being passed to this method. Failing to do
+     * so may lead to thread-safety issues or data inconsistency if the underlying
+     * web server recycles these objects.
+     *
+     * @param requestWrapper  Metadata of the current incoming request.
+     * @param responseWrapper Metadata of the outgoing response.
+     * @param t               The thrown exception to be handled.
+     * @return A structured {@link BaseResponse} ready for the client.
      */
     public BaseResponse handle(WebRequestWrapper requestWrapper, WebResponseWrapper responseWrapper, Throwable t) {
         T code = getCode(t);
@@ -52,6 +68,15 @@ public class ErrorCodeExceptionHandler<T extends BaseErrorCode> {
 
     }
 
+    /**
+     * Resolves the appropriate error code for the given throwable.
+     * <p>
+     * It prioritized specialized {@link ServerApplicationException} codes,
+     * then falls back to the registered exception mapping registry.
+     *
+     * @param e The intercepted throwable.
+     * @return The identified {@link BaseErrorCode} implementation.
+     */
     public T getCode(Throwable e) {
         T code;
         if (e instanceof ServerApplicationException) {
@@ -117,10 +142,13 @@ public class ErrorCodeExceptionHandler<T extends BaseErrorCode> {
 
 
     /**
-     * Find BaseErrorCode in map repository, First, find exception class in map. if handler about exception class is not found, find handler about super class.
-     * Last handler about Exception class is return. if handler about exception class didn't exist, it will return null
-     * @param throwableClass The exception class occurs
-     * @return BaseErrorCode to be used for response generation
+     * Finds a mapped error code for a specific exception class.
+     * <p>
+     * This method performs a hierarchical search: if a direct mapping is not found,
+     * it traverses up the exception's inheritance tree to find the nearest parent mapping.
+     *
+     * @param throwableClass The class of the occurring exception.
+     * @return The mapped {@link BaseErrorCode}, or {@code null} if no mapping exists.
      */
     private T findCode(Class<? extends Throwable> throwableClass) {
         Class<?> current = throwableClass;
