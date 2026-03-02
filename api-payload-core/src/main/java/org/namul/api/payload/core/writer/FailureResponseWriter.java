@@ -4,17 +4,24 @@ import org.namul.api.payload.core.code.BaseErrorCode;
 import org.namul.api.payload.core.response.BaseResponse;
 
 /**
- * The class that write responses in case of failure.
- * if you make interface or class with BaseErrorCode, you can implement this interface and make class which create response with your own interface
- * @param <T> The interface implementing BaseErrorCode which have method to make response
+ * A functional interface responsible for constructing failure responses.
+ * <p>
+ * This interface defines the strategy for transforming an intercepted exception
+ * and its associated error metadata into a concrete {@link BaseResponse}.
+ * Developers can implement this to support custom response formats derived
+ * from their specific {@link BaseErrorCode} implementations.
+ *
+ * @param <T> A type that implements {@link BaseErrorCode}, providing the
+ * necessary metadata for response construction.
  */
 public interface FailureResponseWriter<T extends BaseErrorCode> {
 
     /**
-     * Make failure response.
-     * @param error The data about how to fail
-     * @param t The throwable data
-     * @return The generated return value
+     * Constructs a failure response based on the intercepted exception and error metadata.
+     *
+     * @param t     The intercepted throwable that caused the failure.
+     * @param error The mapped error metadata defining the failure state.
+     * @return A structured {@link BaseResponse} ready for the client.
      */
     BaseResponse onFailure(Throwable t, T error);
 
