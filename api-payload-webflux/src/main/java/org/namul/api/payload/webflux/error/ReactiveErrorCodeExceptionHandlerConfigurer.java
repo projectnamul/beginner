@@ -35,6 +35,29 @@ public class ReactiveErrorCodeExceptionHandlerConfigurer<T extends BaseErrorCode
     }
 
     /**
+     * Configures default handlers for common reactive exceptions.
+     * <p>
+     * This method maps input-related exceptions (e.g., validation, decoding, type mismatch)
+     * to the provided {@code badRequestError} and maps general exceptions to the
+     * {@code internalServerError}.
+     *
+     * @param badRequestError the error code for 400-series client errors (e.g., validation, input)
+     * @param internalServerError the error code for 500-series server errors
+     * @return this configurer for method chaining
+     * @author Jeongmo Seo
+     */
+    public ReactiveErrorCodeExceptionHandlerConfigurer<T> withDefault(T badRequestError, T internalServerError) {
+        return this
+                .addWebExchangeBindException(badRequestError)
+                .addDecodingException(badRequestError)
+                .addMethodNotAllowedException(badRequestError)
+                .addServerWebInputException(badRequestError)
+                .addTypeMismatchException(badRequestError)
+                .addResponseStatusException(badRequestError)
+                .addGlobalException(internalServerError);
+    }
+
+    /**
      * Adds a default handler for {@link WebExchangeBindException}.
      * Typically occurs during @Valid annotation processing on reactive command objects.
      *
