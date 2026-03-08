@@ -17,7 +17,7 @@ public class ReactiveWebResponseWrapper implements WebResponseWrapper {
 
     /**
      * Constructs a new wrapper using the provided {@link ServerHttpResponse}.
-     * * @param response the current reactive HTTP response
+     * @param response the current reactive HTTP response
      */
     public ReactiveWebResponseWrapper(ServerHttpResponse response) {
         this.response = response;
