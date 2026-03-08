@@ -143,7 +143,7 @@ public class ErrorCodeExceptionHandlerConfigurer<T extends BaseErrorCode> {
     /**
      * Create default executor when you unset custom executor
      */
-    private Executor createDefaultExecutor() {
+    protected Executor createDefaultExecutor() {
         return new ThreadPoolExecutor(
                 CORE_POOL_SIZE,
                 MAXIMUM_POOL_SIZE,
