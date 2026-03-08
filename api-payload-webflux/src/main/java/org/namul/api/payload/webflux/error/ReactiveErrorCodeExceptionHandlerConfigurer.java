@@ -171,4 +171,13 @@ public class ReactiveErrorCodeExceptionHandlerConfigurer<T extends BaseErrorCode
         return this;
     }
 
+    @Override
+    public ReactiveErrorCodeExceptionHandler<T> build() {
+        if (this.getExecutor() == null) {
+            this.setAdditionalExceptionHandlersExecutor(
+                    this.createDefaultExecutor()
+            );
+        }
+        return new ReactiveErrorCodeExceptionHandler<>(this);
+    }
 }
