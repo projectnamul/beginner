@@ -35,7 +35,6 @@ public class ReactiveErrorCodeExceptionHandler<T extends BaseErrorCode> extends 
      * @return a {@link Mono} emitting the standardized error response
      */
     public Mono<BaseResponse> handleToMono(WebRequestWrapper request, WebResponseWrapper response, Throwable ex) {
-        // 기존 ErrorCodeExceptionHandler의 handle 로직을 호출한 뒤 Mono로 래핑
         return Mono.fromSupplier(() -> super.handle(request, response, ex));
     }
 }
