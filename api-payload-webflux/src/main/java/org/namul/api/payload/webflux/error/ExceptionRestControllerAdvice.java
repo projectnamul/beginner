@@ -61,10 +61,8 @@ public class ExceptionRestControllerAdvice<T extends BaseErrorCode> {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseResponse> handleException(ServerWebExchange exchange, Exception ex) {
-        // 1. Determine the appropriate error code from the exception
         T code = errorCodeExceptionHandler.getCode(ex);
 
-        // 2. Wrap the reactive request/response and generate the standard payload
         return ResponseEntity
                 .status(code.getHttpStatus())
                 .header(HttpHeaders.CONTENT_TYPE, contentType)
