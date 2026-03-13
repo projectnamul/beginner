@@ -4,7 +4,7 @@
 
   <groupId>org.namul</groupId>
   <artifactId>beginner</artifactId>
-  <version>0.9.3</version>
+  <version>0.9.4</version>
   <packaging>pom</packaging>
 
   <description>
@@ -17,6 +17,8 @@
     <module>api-payload-core</module>
     <module>api-payload-webmvc</module>
     <module>api-payload-webmvc-starter</module>
+    <module>api-payload-webflux</module>
+    <module>api-payload-webflux-starter</module>
   </modules>
 
   <licenses>
