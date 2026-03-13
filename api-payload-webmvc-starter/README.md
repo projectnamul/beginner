@@ -11,6 +11,7 @@
 This module is designed to eliminate boilerplate code and provide a "plug-and-play" experience for Spring Boot developers:
 
 * **Auto-Registration**: Automatically configures `DefaultSuccessResponseWriter` and `DefaultFailureResponseWriter` as Spring Beans.
+* **Version Alignment**: Maintains synchronized versioning between `api-payload-core` and `api-payload-webmvc`, ensuring guaranteed compatibility and a consistent feature set across the reactive implementation.
 * **Ready-to-use Advice**: Activates `ExceptionRestControllerAdvice` out of the box to intercept and standardize all controller exceptions.
 * **Web-Native Integration**: Seamlessly bridges `HttpServletRequest/Response` with the framework's internal `WebRequest/ResponseWrapper` for cleaner code.
 * **Asynchronous Processing**: Automatically detects and registers all `AdditionalExceptionHandler` beans to run side-effect logic (logging, notifications) asynchronously.

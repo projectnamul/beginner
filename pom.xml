@@ -18,6 +18,7 @@
     <module>api-payload-webmvc</module>
     <module>api-payload-webmvc-starter</module>
     <module>api-payload-webflux</module>
+    <module>api-payload-webflux-starter</module>
   </modules>
 
   <licenses>

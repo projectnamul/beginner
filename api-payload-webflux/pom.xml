@@ -7,6 +7,7 @@
         <groupId>org.namul</groupId>
         <artifactId>beginner</artifactId>
         <version>0.9.3</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>api-payload-webflux</artifactId>
@@ -14,35 +15,6 @@
     <description>
         Spring WebFlux implementation for api-payload, focusing on reactive exception handling and non-blocking response orchestration.
     </description>
-    <url>https://github.com/projectnamul/beginner</url>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <url>https://github.com/projectnamul</url>
-        <connection>scm:git:git://github.com/projectnamul/beginner.git</connection>
-        <developerConnection>scm:git:ssh://github.com/projectnamul/beginner.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>Properks</id>
-            <name>Jeongmo Seo</name>
-            <email>wjdah1402@gmail.com</email>
-            <url>https://github.com/Properks</url>
-        </developer>
-    </developers>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <dependency>

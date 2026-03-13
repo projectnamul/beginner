@@ -10,27 +10,30 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>api-payload-webmvc</artifactId>
-    <name>api-payload-webmvc</name>
-    <description>
-        Spring WebMVC implementation for api-payload, focusing on global exception handling and response interception.
-    </description>
+    <artifactId>api-payload-webflux-starter</artifactId>
+    <name>api-payload-webflux-starter</name>
+    <description>Auto-configuration for instant integration of standardized api-payload-core and api-payload-webflux in Spring WebFlux environments</description>
 
     <dependencies>
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <scope>provided</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure-processor</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.namul</groupId>
             <artifactId>api-payload-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.namul</groupId>
+            <artifactId>api-payload-webflux</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
+
 </project>
